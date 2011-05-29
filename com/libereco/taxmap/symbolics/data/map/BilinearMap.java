@@ -24,8 +24,8 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 
 	private int predicateNum;
 
-	private T[] sources;
-	private T[] targets;
+	private T[] sourceObjects;
+	private T[] targetObjects;
 
 	private volatile transient int InstanceUpdateNum;
 
@@ -105,7 +105,7 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 
 			if (IRelationInstance.UNKNOWN != relation) 
 			{
-				result = new RelationInstance<T>(sources[thisRow], targets[thisCol], relation);
+				result = new RelationInstance<T>(sourceObjects[thisRow], targetObjects[thisCol], relation);
 			}
 			return result;
 		}
@@ -137,20 +137,20 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 		int colNum = getColCount(targetContext);
 		bimap.init(rowNum, colNum);
 
-		sources = (T[]) new IIndexedObject[rowNum];
-		targets = (T[]) new IIndexedObject[colNum];
+		sourceObjects = (T[]) new IIndexedObject[rowNum];
+		targetObjects = (T[]) new IIndexedObject[colNum];
 
-		initRow(sourceContext, sources);
-		initColumn(targetContext, targets);
+		initRow(sourceContext, sourceObjects);
+		initColumn(targetContext, targetObjects);
 
 		predicateNum = 0;
 		InstanceUpdateNum = 0;
 	}
 
-	protected void initColumn(IContext targetContext, IIndexedObject[] targets) 
+	protected void initColumn(IContext targetContext, IIndexedObject[] targetObjects) 
 	{ }
 
-	protected void initRow(IContext sourceContext, IIndexedObject[] sources) 
+	protected void initRow(IContext sourceContext, IIndexedObject[] sourceObjects) 
 	{ }
 
 	public Properties getAttributes() 
@@ -192,13 +192,13 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 	public boolean setRelation(T source, T target, char relation) 
 	{
 		boolean infomatch =
-				source == sources[source.getIndex()] &&
-				target == targets[target.getIndex()] &&
+				source == sourceObjects[source.getIndex()] &&
+				target == targetObjects[target.getIndex()] &&
 				relation == bimap.get(source.getIndex(), target.getIndex());
 
 		if (!infomatch) 
 		{
-			if (source == sources[source.getIndex()] && target == targets[target.getIndex()]) 
+			if (source == sourceObjects[source.getIndex()] && target == targetObjects[target.getIndex()]) 
 			{
 				InstanceUpdateNum++;
 				bimap.set(source.getIndex(), target.getIndex(), relation);
@@ -219,15 +219,15 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 	public List<IRelationInstance<T>> getSources(T source) 
 	{
 		int i = source.getIndex();
-		if (0 <= i && i < sources.length && (source == sources[i])) 
+		if (i >= 0 && i < sourceObjects.length && (source == sourceObjects[i])) 
 		{
 			ArrayList<IRelationInstance<T>> relationSet = new ArrayList<IRelationInstance<T>>();
-			for (int j = 0; j < targets.length; j++) 
+			for (int j = 0; j < targetObjects.length; j++) 
 			{
 				char relation = bimap.get(i, j);
 				if (IRelationInstance.UNKNOWN != relation) 
 				{
-					relationSet.add(new RelationInstance<T>(sources[i], targets[j], relation));
+					relationSet.add(new RelationInstance<T>(sourceObjects[i], targetObjects[j], relation));
 				}
 			}
 			return relationSet;
@@ -241,15 +241,15 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 	public List<IRelationInstance<T>> getTargets(T target) 
 	{
 		int j = target.getIndex();
-		if (0 <= j && j < targets.length && (target == targets[j])) 
+		if (j >= 0  && j < targetObjects.length && (target == targetObjects[j])) 
 		{
 			ArrayList<IRelationInstance<T>> relationSet = new ArrayList<IRelationInstance<T>>();
-			for (int i = 0; i < sources.length; i++) 
+			for (int i = 0; i < sourceObjects.length; i++) 
 			{
 				char relation = bimap.get(i, j);
 				if (IRelationInstance.UNKNOWN != relation) 
 				{
-					relationSet.add(new RelationInstance<T>(sources[i], targets[j], relation));
+					relationSet.add(new RelationInstance<T>(sourceObjects[i], targetObjects[j], relation));
 				}
 			}
 			return relationSet;
@@ -282,7 +282,7 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 				if (inst.getTarget() instanceof IIndexedObject) 
 				{
 					T t = (T) inst.getTarget();
-					relationFound = IRelationInstance.UNKNOWN != getRelation(s, t) && s == sources[s.getIndex()] && t == targets[t.getIndex()];
+					relationFound = IRelationInstance.UNKNOWN != getRelation(s, t) && s == sourceObjects[s.getIndex()] && t == targetObjects[t.getIndex()];
 				}
 			}
 		}
@@ -338,12 +338,12 @@ public class BilinearMap<T extends IIndexedObject> extends Map<T> implements ICo
 		return new ConceptMap(generator, source, target);
 	}
 
-	protected int getColCount(IContext c) 
+	protected int getColumnCount(IContext context) 
 	{
 		return -1;
 	}
 
-	protected int getRowCount(IContext c) 
+	protected int getRowCount(IContext context) 
 	{
 		return -1;
 	}
