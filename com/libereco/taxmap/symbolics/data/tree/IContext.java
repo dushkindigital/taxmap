@@ -12,17 +12,17 @@ public interface IContext
 	/**
 	 * Sets a new root node for the context.
 	 */
-	void setRoot(INode root);
+	void setRootNode(INode root);
 
 	/**
 	 * Returns the root node of the context.
 	 */
-	INode getRoot();
+	INode getRootNode();
 
 	/**
 	 * Returns true if the context has a root node.
 	 */
-	boolean hasRoot();
+	boolean hasRootNode();
 
 	/**
 	 * Creates a node.
@@ -37,17 +37,17 @@ public interface IContext
 	/**
 	 * Creates a root node.
 	 */
-	INode createRoot();
+	INode createRootNode();
 
 	/**
 	 * Creates a root node with a name.
 	 */
-	INode createRoot(String name);
+	INode createRootNode(String name);
 
 	/**
 	 * Returns iterator over all context nodes.
 	 */
-	Iterator<INode> getNodes();
+	Iterator<INode> getNodeIterator();
 
 	/**
 	 * Returns unmodifiable list of all context nodes.

@@ -17,10 +17,10 @@ import com.libereco.taxmap.symbolics.data.ling.ILabelConcept;
 public class Node extends IndexedObject implements INode, INodeCore 
 {
 	protected INode _parentNode;
-	protected ArrayList<INode> _childNodes;
-	protected ArrayList<INode> _ancestorNodes;
+	protected ArrayList<INode> _childNodeList;
+	protected ArrayList<INode> _ancestorNodeList;
 	protected int _ancestorNodeCount;
-	protected ArrayList<INode> _descendantNodes;
+	protected ArrayList<INode> _descendantNodeList;
 	protected int _descendantNodeCount;
 
 	// id is needed to store NodeConceptPredicates correctly.
@@ -33,13 +33,17 @@ public class Node extends IndexedObject implements INode, INodeCore
 	// NodeConceptPredicate is made of LabelConceptPredicates,
 	protected String _nodeConceptPredicate;
 
-	// source taxonomy tree
+	// source flag
 	protected boolean _sourceFlag;
 
 	protected ArrayList<ILabelConcept> _conceptList;
 
 	// node counter to set unique node id during creation
 	protected static long _cardinality = 0;
+
+	protected String _origin;
+	protected Object _objectInstance; 
+	protected boolean _rendition;
 
 	// iterator which iterates over all parent nodes
 
@@ -82,7 +86,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 
 		public StartIterator(INode start, Iterator<INode> i) 
 		{
-			if ( == null start) 
+			if (start == null) 
 			{
 				throw new IllegalArgumentException("argument is null");
 			}
@@ -92,13 +96,13 @@ public class Node extends IndexedObject implements INode, INodeCore
 
 		public boolean hasNext() 
 		{
-			return ( != null start || i.hasNext());
+			return (start  != null || i.hasNext());
 		}
 
 		public INode next() 
 		{
 			INode result = start;
-			if ( != null start) 
+			if (start != null) 
 			{
 				start = null;
 			} 
@@ -121,7 +125,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 
 		public BreadthFirstSearch(INode start) 
 		{
-			if ( == null start) 
+			if (start == null) 
 			{
 				throw new IllegalArgumentException("argument is null");
 			}
@@ -138,7 +142,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 		public INode next() 
 		{
 			INode current = queue.removeFirst();
-			for (Iterator<INode> i = current.getChildren(); i.hasNext();) 
+			for (Iterator<INode> i = current.getChildNodeIterator(); i.hasNext();) 
 			{
 				queue.add(i.next());
 			}
@@ -162,10 +166,10 @@ public class Node extends IndexedObject implements INode, INodeCore
 	public Node() 
 	{
 		_parentNode = null;
-		_childNodes = null;
-		_ancestorNodes = null;
+		_childNodeList = null;
+		_ancestorNodeList = null;
 		_ancestorNodeCount = -1;
-		_descendantNodes = null;
+		_descendantNodeList = null;
 		_descendantNodeCount = -1;
 
 		_sourceFlag = false;
@@ -181,7 +185,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 		_nodeConceptPredicate = "";
 		_conceptList = null;
 		index = -1;
-		provenance = null;
+		_origin = null;
 	}
 
 	/**
@@ -197,26 +201,26 @@ public class Node extends IndexedObject implements INode, INodeCore
 
 	public INode getChildAt(int index) 
 	{
-		if (_childNodes == null) 
+		if (_childNodeList == null) 
 		{
 			throw new ArrayIndexOutOfBoundsException("node has no _childNodes");
 		}
-		return _childNodes.get(index);
+		return _childNodeList.get(index);
 	}
 
 	public int getChildCount() 
 	{
-		if (_childNodes == null) 
+		if (_childNodeList == null) 
 		{
 			return 0;
 		} 
 		else 
 		{
-			return _childNodes.size();
+			return _childNodeList.size();
 		}
 	}
 
-	public int getChildIndex(INode child) 
+	public int getChildNodeIndex(INode child) 
 	{
 		if (child == null) 
 		{
@@ -227,26 +231,26 @@ public class Node extends IndexedObject implements INode, INodeCore
 		{
 			return -1;
 		}
-		return _childNodes.indexOf(child);
+		return _childNodeList.indexOf(child);
 	}
 
-	public Iterator<INode> getChildren() 
+	public Iterator<INode> getChildNodeIterator() 
 	{
-		if (_childNodes == null) 
+		if (_childNodeList == null) 
 		{
 			return Collections.<INode>emptyList().iterator();
 		} 
 		else 
 		{
-			return _childNodes.iterator();
+			return _childNodeList.iterator();
 		}
 	}
 
-	public List<INode> getChildrenList() 
+	public List<INode> getChildNodeList() 
 	{
-		if (_childNodes != null) 
+		if (_childNodeList != null) 
 		{
-			return Collections.unmodifiableList(_childNodes);
+			return Collections.unmodifiableList(_childNodeList);
 		} 
 		else 
 		{
@@ -254,7 +258,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 		}
 	}
 
-	public INode createChild() 
+	public INode createChildNode() 
 	{
 		INode child = new Node();
 		addChildNode(child);
@@ -292,19 +296,17 @@ public class Node extends IndexedObject implements INode, INodeCore
 		}
 
 		node.setParentNode(this);
-		if (_childNodes == null) 
+		if (_childNodeList == null) 
 		{
-			_childNodes = new ArrayList<INode>();
+			_childNodeList = new ArrayList<INode>();
 		}
-		_childNodes.add(index, node);
-		fireTreeStructureChanged(this);
+		_childNodeList.add(index, node);
 	}
 
 	public void removeChildNode(int index) 
 	{
 		INode child = getChildAt(index);
-		_childNodes.remove(index);
-		fireTreeStructureChanged(this);
+		_childNodeList.remove(index);
 		child.setParentNode(null);
 	}
 
@@ -346,63 +348,63 @@ public class Node extends IndexedObject implements INode, INodeCore
 		}
 	}
 
-	public boolean isLeaf() 
+	public boolean isLeafNode() 
 	{
 		return getChildCount() == 0;
 	}
 
-	public int getAncestorCount() 
+	public int getAncestorNodeCount() 
 	{
 		if (_ancestorNodeCount == -1) 
 		{
-			if (_ancestorNodes == null) 
+			if (_ancestorNodeList == null) 
 			{
 				_ancestorNodeCount = 0;
 				if (_parentNode != null) 
 				{
-					_ancestorNodeCount = _parentNode.getAncestorCount() + 1;
+					_ancestorNodeCount = _parentNode.getAncestorNodeCount() + 1;
 				}
 			} 
 			else 
 			{
-				_ancestorNodeCount = _ancestorNodes.size();
+				_ancestorNodeCount = _ancestorNodeList.size();
 			}
 		}
 		return _ancestorNodeCount;
 	}
 
-	public Iterator<INode> getAncestors() 
+	public Iterator<INode> getAncestorNodeIterator() 
 	{
 		return new Ancestors(this);
 	}
 
-	public List<INode> getAncestorsList() 
+	public List<INode> getAncestorNodeList() 
 	{
-		if (_ancestorNodes == null) 
+		if (_ancestorNodeList == null) 
 		{
-			_ancestorNodes = new ArrayList<INode>(getAncestorCount());
+			_ancestorNodeList = new ArrayList<INode>(getAncestorNodeCount());
 			if (_parentNode != null) 
 			{
-				_ancestorNodes.add(_parentNode);
-				_ancestorNodes.addAll(_parentNode.getAncestorsList());
+				_ancestorNodeList.add(_parentNode);
+				_ancestorNodeList.addAll(_parentNode.getAncestorNodeList());
 			}
 		}
-		return Collections.unmodifiableList(_ancestorNodes);
+		return Collections.unmodifiableList(_ancestorNodeList);
 	}
 
-	public int getLevel() 
+	public int getNodeLevel() 
 	{
-		return getAncestorCount();
+		return getAncestorNodeCount();
 	}
 
-	public int getDescendantCount() 
+	public int getDescendantNodeCount() 
 	{
 		if (_descendantNodeCount == -1) 
 		{
-			if (_descendantNodes == null) 
+			if (_descendantNodeList == null) 
 			{
 				_descendantNodeCount = 0;
-				for (Iterator<INode> i = getDescendants(); i.hasNext();) 
+				for (Iterator<INode> i = getDescendantNodeIterator(); i.hasNext();) 
 				{
 					i.next();
 					_descendantNodeCount++;
@@ -410,38 +412,38 @@ public class Node extends IndexedObject implements INode, INodeCore
 			} 
 			else 
 			{
-				_descendantNodeCount = _descendantNodes.size();
+				_descendantNodeCount = _descendantNodeList.size();
 			}
 		}
 		return _descendantNodeCount;
 	}
 
-	public Iterator<INode> getDescendants() 
+	public Iterator<INode> getDescendantNodeIterator() 
 	{
 		return new BreadthFirstSearch(this);
 	}
 
-	public List<INode> getDescendantsList() 
+	public List<INode> getDescendantNodeList() 
 	{
-		if (_descendantNodes == null) 
+		if (_descendantNodeList == null) 
 		{
-			_descendantNodes = new ArrayList<INode>(getChildCount());
-			if (_childNodes != null) 
+			_descendantNodeList = new ArrayList<INode>(getChildCount());
+			if (_childNodeList != null) 
 			{
-				_descendantNodes.addAll(_childNodes);
-				for (INode child : _childNodes) 
+				_descendantNodeList.addAll(_childNodeList);
+				for (INode child : _childNodeList) 
 				{
-					_descendantNodes.addAll(child.getDescendantsList());
+					_descendantNodeList.addAll(child.getDescendantNodeList());
 				}
-				_descendantNodes.trimToSize();
+				_descendantNodeList.trimToSize();
 			}
 		}
-		return Collections.unmodifiableList(_descendantNodes);
+		return Collections.unmodifiableList(_descendantNodeList);
 	}
 
 	public Iterator<INode> getSubtree() 
 	{
-		return new StartIterator(this, getDescendants());
+		return new StartIterator(this, getDescendantNodeIterator());
 	}
 
 	public INodeCore getNodeCore() 
@@ -484,7 +486,7 @@ public class Node extends IndexedObject implements INode, INodeCore
 			} 
 			else 
 			{
-				return (node.getParentNode() == this && _childNodes.indexOf(node) > -1);
+				return (node.getParentNode() == this && _childNodeList.indexOf(node) > -1);
 			}
 		}
 	}
@@ -517,6 +519,240 @@ public class Node extends IndexedObject implements INode, INodeCore
 	public void setLabelConceptPredicate(String LabelConceptPredicate) 
 	{
 		this._labelConceptPredicate = LabelConceptPredicate;
+	}
+
+	public String getNodeConceptPredicate() 
+	{
+		return _nodeConceptPredicate;
+	}
+
+	public void setNodeConceptPredicate(String NodeConceptPredicate) 
+	{
+		this._nodeConceptPredicate = NodeConceptPredicate;
+	}
+
+	public boolean getSource() 
+	{
+		return _sourceFlag;
+	}
+
+	public void setSource(boolean source) 
+	{
+		this._sourceFlag = source;
+	}
+
+	public ILabelConcept getConceptAt(int index) 
+	{
+		if (_conceptList == null) 
+		{
+			throw new ArrayIndexOutOfBoundsException("node has no Concepts");
+		}
+		return _conceptList.get(index);
+	}
+
+	public int getConceptCount() 
+	{
+		if (_conceptList == null) 
+		{
+			return 0;
+		} 
+		else 
+		{
+			return _conceptList.size();
+		}
+	}
+
+	public int getConceptIndex(ILabelConcept concept) 
+	{
+		if (concept == null) 
+		{
+			throw new IllegalArgumentException("argument is null");
+		}
+
+		return _conceptList.indexOf(concept);
+	}
+
+	public Iterator<ILabelConcept> getConceptIterator() 
+	{
+		if (_conceptList == null) 
+		{
+			return Collections.<ILabelConcept>emptyList().iterator();
+		} 
+		else 
+		{
+			return _conceptList.iterator();
+		}
+	}
+
+	public List<ILabelConcept> getConceptList() 
+	{
+		if (_conceptList == null) 
+		{
+			return Collections.emptyList();
+		} 
+		else 
+		{
+			return Collections.unmodifiableList(_conceptList);
+		}
+	}
+
+	public ILabelConcept createConcept() 
+	{
+		return new LabelConcept();
+	}
+
+	public void addConcept(ILabelConcept concept) 
+	{
+		addConcept(getConceptCount(), concept);
+	}
+
+	public void addConcept(int index, ILabelConcept concept) 
+	{
+		if (concept == null) 
+		{
+			throw new IllegalArgumentException("new concept is null");
+		}
+
+		if (_conceptList == null) 
+		{
+			_conceptList = new ArrayList<ILabelConcept>();
+		}
+		_conceptList.add(index, concept);
+	}
+
+	public void removeConcept(int index) 
+	{
+		_conceptList.remove(index);
+	}
+
+	public void removeConcept(ILabelConcept concept) 
+	{
+		_conceptList.remove(concept);
+	}
+
+	public boolean isNodeRendered() 
+	{
+		return _rendition;
+	}
+
+	public void setNodeRendered(boolean rendition) 
+	{
+		this._rendition = rendition;
+	}
+
+	public boolean isSubtreeRendered() 
+	{
+		boolean treeRendition = _rendition;
+		if (treeRendition) 
+		{
+			if (_childNodeList != null) 
+			{
+				for (INode child : _childNodeList) 
+				{
+					treeRendition = treeRendition && child.getNodeCore().isSubtreeRendered();
+					if (!treeRendition) 
+					{
+						break;
+					}
+				}
+			}
+		}
+		return treeRendition;
+	}
+
+	public String getDerivationInfo() 
+	{
+		return _origin;
+	}
+
+	public void setDerivationInfo(String origin) 
+	{
+		this._origin = origin;
+	}
+
+	public Object getInstance() 
+	{
+		return _objectInstance;
+	}
+
+	public void setInstance(Object instance) 
+	{
+		_objectInstance = instance;
+	}
+
+
+	public String toString() 
+	{
+		return _nodeName;
+	}
+
+	public int getIndex(TreeNode node) 
+	{
+		if (node instanceof INode) 
+		{
+			return getChildIndex((INode) node);
+		} 
+		else 
+		{
+			return -1;
+		}
+	}
+
+	public Enumeration childNodeList() 
+	{
+		return Collections.enumeration(_childNodeList);
+	}
+
+	public void insert(MutableTreeNode child, int index) 
+	{
+		if (child instanceof INode) 
+		{
+			addChildNode(index, (INode) child);
+		}
+	}
+
+	public void remove(int index) 
+	{
+		removeChildNode(index);
+	}
+
+	public void remove(MutableTreeNode node) 
+	{
+		if (node instanceof INode) 
+		{
+			removeChildNode((INode) node);
+		}
+	}
+
+	public void setParentNode(MutableTreeNode parent) 
+	{
+		if (parent instanceof INode) 
+		{
+			setParentNode((Node) parent);
+		}
+	}
+
+	public void trim() 
+	{
+		if (_conceptList != null) 
+		{
+			_conceptList.trimToSize();
+			for (ILabelConcept concept : _conceptList) 
+			{
+				if (concept instanceof LabelConcept) 
+				{
+					((LabelConcept) concept).trim();
+				}
+			}
+		}
+		if (_childNodeList != null) 
+		{
+			_childNodeList.trimToSize();
+			for (INode child : _childNodeList) 
+			{
+				((Node) child).trim();
+			}
+		}
 	}
 
 }

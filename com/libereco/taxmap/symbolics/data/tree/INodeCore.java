@@ -124,15 +124,50 @@ public interface INodeCore
 	void addConcept(int index, ILabelConcept concept);
 
 	/**
-	 * Removes the concept at index from the existing label concepts.
+	 * Removes the concept at index from the existing set of label concepts.
 	 * @param index location of an concept to remove
 	 */
 	void removeConcept(int index);
 
 	/**
-	 * Removes concept from the existing label concepts.
+	 * Removes concept from the existing set of label concepts.
 	 * @param concept
 	 */
 	void removeConcept(ILabelConcept concept);
+
+	/**
+	 * Returns if a node has been rendered properly.
+	 */
+	boolean isNodeRendered();
+
+	/**
+	 * Sets if a node has been rendered properly.
+	 */
+	void setNodeRendered(boolean rendition);
+
+	/**
+	 * Returns if a subtree has been rendered properly.
+	 */
+	boolean isSubtreeRendered();
+
+	/**
+	 * Returns the derivation info of a node.
+	 */
+	String getDerivationInfo();
+
+	/**
+	 * Sets the derivation info of a node.
+	 */
+	void setDerivationInfo(String origin);
+
+	/**
+	 * Returns the instance of the current node object
+	 */
+	Object getInstance();
+
+	/**
+	 * Sets the instance of the current node object
+	 */
+	void setInstance(Object instance);
 }
 

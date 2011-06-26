@@ -19,18 +19,18 @@ public class Context implements IContext, IHierarchy
 		_nodeList = null;
 	}
 
-	public void setRoot(INode node) 
+	public void setRootNode(INode node) 
 	{
 		this._root = node;
 		_root.addHierarchy(this);
 	}
 
-	public INode getRoot() 
+	public INode getRootNode() 
 	{
 		return _root;
 	}
 
-	public boolean hasRoot() 
+	public boolean hasRootNode() 
 	{
 		return _root != null;
 	}
@@ -45,23 +45,23 @@ public class Context implements IContext, IHierarchy
 		return new Node(name);
 	}
 
-	public INode createRoot() 
+	public INode createRootNode() 
 	{
 		_root = new Node();
 		_root.addHierarchy(this);
 		return _root;
 	}
 
-	public INode createRoot(String name) 
+	public INode createRootNode(String name) 
 	{
-		INode node = createRoot();
+		INode node = createRootNode();
 		node.getNodeData().setName(name);
 		return node;
 	}
 
-	public Iterator<INode> getNodes() 
+	public Iterator<INode> getNodeIterator() 
 	{
-		if (hasRoot()) 
+		if (hasRootNode()) 
 		{
 			return new Node.StartIterator(_root, _root.getDescendants());
 		} 
@@ -79,7 +79,7 @@ public class Context implements IContext, IHierarchy
 		} 
 		else 
 		{
-			if (hasRoot()) 
+			if (hasRootNode()) 
 			{
 				_nodeList = new ArrayList<INode>();
 				_nodeList.add(root);

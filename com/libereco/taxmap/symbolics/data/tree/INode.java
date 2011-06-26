@@ -22,7 +22,6 @@ public interface INode extends IIndexedObject
 
 	/**
 	 * Returns the index of node in the receivers children. 
-	 *
 	 * @param child a node to search for
 	 * @return the index of node in the receivers children
 	 */
@@ -31,7 +30,7 @@ public interface INode extends IIndexedObject
 	/**
 	 * Returns the iterator over the children of the receiver.
 	 */
-	Iterator<INode> getChildNodes();
+	Iterator<INode> getChildNodeIterator();
 
 	/**
 	 * Returns unmodifiable list of receivers children.
@@ -105,17 +104,17 @@ public interface INode extends IIndexedObject
 	/**
 	 * Returns the count of ancestor nodes.
 	 */
-	int getAncestorCount();
+	int getAncestorNodeCount();
 
 	/**
 	 * Returns ancestors of the receiver. 
 	 */
-	Iterator<INode> getAncestorNodes();
+	Iterator<INode> getAncestorNodeIterator();
 
 	/**
 	 * Returns unmodifiable list of receivers ancestors.
 	 */
-	List<INode> getAncestorsList();
+	List<INode> getAncestorNodeList();
 
 	/**
 	 * Returns the level of this node
@@ -130,7 +129,7 @@ public interface INode extends IIndexedObject
 	/**
 	 * Returns descendants of the receiver. 
 	 */
-	Iterator<INode> getDescendantNodes();
+	Iterator<INode> getDescendantNodeIterator();
 
 	/**
 	 * Returns list of receivers descendants.
