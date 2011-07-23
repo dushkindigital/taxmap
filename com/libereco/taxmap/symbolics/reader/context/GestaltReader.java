@@ -10,13 +10,13 @@ import org.apache.log4j.Logger;
  */
 public abstract class GestaltReader extends Environment implements IGestaltReader 
 {
-	private static final Logger log = Logger.getLogger(GestaltReader.class);
+	private static final Logger readLog = Logger.getLogger(GestaltReader.class);
 
 	protected int ExploredNodeNum = 0;
 
 	protected void generateId(IGestalt gestalt) 
 	{
-		log.debug("Generating ids for gestalt...");
+		readLog.debug("Generating ids for gestalt nodes...");
 		ExploredNodeNum = 0;
 		for (INode node : gestalt.getNodeList()) 
 		{
