@@ -1,0 +1,292 @@
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/sample_ontology1.owl
+
+==> Loaded ontology: Ontology(<file://www.ibm.com/WSRR/Transport#TransportOntology> [Axioms: 19] [Logical axioms: 4])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/sample_ontology1.owl
+
+==> Removed ontology Ontology(<file://www.ibm.com/WSRR/Transport#TransportOntology> [Axioms: 19] [Logical axioms: 4])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/sample_ontology2.owl
+
+==> Loaded ontology: Ontology(<http://www.co-ode.org/ontologies/pizza/pizza.owl> [Axioms: 940] [Logical axioms: 712])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/sample_ontology2.owl
+
+==> Removed ontology Ontology(<http://www.co-ode.org/ontologies/pizza/pizza.owl> [Axioms: 940] [Logical axioms: 712])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110317.owl
+Could not parse the ontology: Problem parsing file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110317.owl
+Could not parse ontology.  Either a suitable parser could not be found, or parsing failed.  See parser logs below for explanation.
+The following parsers were tried:
+1) RDFXMLParser
+2) OWLXMLParser
+3) OWLFunctionalSyntaxOWLParser
+4) TurtleOntologyParser
+5) OWLOBOParser
+6) KRSS2OWLParser
+7) ManchesterOWLSyntaxOntologyParser
+
+
+Detailed logs:
+--------------------------------------------------------------------------------
+Parser: RDFXMLParser
+org.semanticweb.owlapi.rdf.syntax.RDFParserException: [line=215293:column=74] Characters were not excepted.
+
+--------------------------------------------------------------------------------
+Parser: OWLXMLParser
+Attribute not found: IRI (Line 88)
+
+--------------------------------------------------------------------------------
+Parser: OWLFunctionalSyntaxOWLParser
+Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+--------------------------------------------------------------------------------
+Parser: TurtleOntologyParser
+uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+--------------------------------------------------------------------------------
+Parser: OWLOBOParser
+org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+--------------------------------------------------------------------------------
+Parser: KRSS2OWLParser
+de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+--------------------------------------------------------------------------------
+Parser: ManchesterOWLSyntaxOntologyParser
+Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+
+
+Tried to parse the ontology with the RDFXMLParser parser
+Failed because: org.semanticweb.owlapi.rdf.syntax.RDFParserException: [line=215293:column=74] Characters were not excepted.
+
+Tried to parse the ontology with the OWLXMLParser parser
+Failed because: Attribute not found: IRI (Line 88)
+
+Tried to parse the ontology with the OWLFunctionalSyntaxOWLParser parser
+Failed because: Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+Tried to parse the ontology with the TurtleOntologyParser parser
+Failed because: uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+Tried to parse the ontology with the OWLOBOParser parser
+Failed because: org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+Tried to parse the ontology with the KRSS2OWLParser parser
+Failed because: de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+Tried to parse the ontology with the ManchesterOWLSyntaxOntologyParser parser
+Failed because: Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110321.owl
+
+==> Loaded ontology: Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 145497] [Logical axioms: 124704])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110321.owl
+
+==> Removed ontology Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 145497] [Logical axioms: 124704])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110322.owl
+
+==> Loaded ontology: Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 145499] [Logical axioms: 124703])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110322.owl
+
+==> Removed ontology Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 145499] [Logical axioms: 124703])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110323.owl
+Could not parse the ontology: Problem parsing file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/ebayCategories.20110323.owl
+Could not parse ontology.  Either a suitable parser could not be found, or parsing failed.  See parser logs below for explanation.
+The following parsers were tried:
+1) RDFXMLParser
+2) OWLXMLParser
+3) OWLFunctionalSyntaxOWLParser
+4) TurtleOntologyParser
+5) OWLOBOParser
+6) KRSS2OWLParser
+7) ManchesterOWLSyntaxOntologyParser
+
+
+Detailed logs:
+--------------------------------------------------------------------------------
+Parser: RDFXMLParser
+org.semanticweb.owlapi.rdf.syntax.RDFParserException: [line=81575:column=76] Characters were not excepted.
+
+--------------------------------------------------------------------------------
+Parser: OWLXMLParser
+Attribute not found: IRI (Line 88)
+
+--------------------------------------------------------------------------------
+Parser: OWLFunctionalSyntaxOWLParser
+Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+--------------------------------------------------------------------------------
+Parser: TurtleOntologyParser
+uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+--------------------------------------------------------------------------------
+Parser: OWLOBOParser
+org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+--------------------------------------------------------------------------------
+Parser: KRSS2OWLParser
+de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+--------------------------------------------------------------------------------
+Parser: ManchesterOWLSyntaxOntologyParser
+Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+
+
+Tried to parse the ontology with the RDFXMLParser parser
+Failed because: org.semanticweb.owlapi.rdf.syntax.RDFParserException: [line=81575:column=76] Characters were not excepted.
+
+Tried to parse the ontology with the OWLXMLParser parser
+Failed because: Attribute not found: IRI (Line 88)
+
+Tried to parse the ontology with the OWLFunctionalSyntaxOWLParser parser
+Failed because: Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+Tried to parse the ontology with the TurtleOntologyParser parser
+Failed because: uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+Tried to parse the ontology with the OWLOBOParser parser
+Failed because: org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+Tried to parse the ontology with the KRSS2OWLParser parser
+Failed because: de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+Tried to parse the ontology with the ManchesterOWLSyntaxOntologyParser parser
+Failed because: Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110317.owl
+
+==> Loaded ontology: Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23281])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110317.owl
+
+==> Removed ontology Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23281])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110321.owl
+
+==> Loaded ontology: Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23279])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110321.owl
+
+==> Removed ontology Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23279])
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110322.owl
+Could not parse the ontology: Problem parsing file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110322.owl
+Could not parse ontology.  Either a suitable parser could not be found, or parsing failed.  See parser logs below for explanation.
+The following parsers were tried:
+1) RDFXMLParser
+2) OWLXMLParser
+3) OWLFunctionalSyntaxOWLParser
+4) TurtleOntologyParser
+5) OWLOBOParser
+6) KRSS2OWLParser
+7) ManchesterOWLSyntaxOntologyParser
+
+
+Detailed logs:
+--------------------------------------------------------------------------------
+Parser: RDFXMLParser
+org.xml.sax.SAXParseException; systemId: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110322.owl; lineNumber: 22831; columnNumber: 7; The element type "owl:NamedIndividual" must be terminated by the matching end-tag "</owl:NamedIndividual>".
+
+--------------------------------------------------------------------------------
+Parser: OWLXMLParser
+Attribute not found: IRI (Line 88)
+
+--------------------------------------------------------------------------------
+Parser: OWLFunctionalSyntaxOWLParser
+Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+--------------------------------------------------------------------------------
+Parser: TurtleOntologyParser
+uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+--------------------------------------------------------------------------------
+Parser: OWLOBOParser
+org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+--------------------------------------------------------------------------------
+Parser: KRSS2OWLParser
+de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+--------------------------------------------------------------------------------
+Parser: ManchesterOWLSyntaxOntologyParser
+Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+
+
+Tried to parse the ontology with the RDFXMLParser parser
+Failed because: org.xml.sax.SAXParseException; systemId: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110322.owl; lineNumber: 22831; columnNumber: 7; The element type "owl:NamedIndividual" must be terminated by the matching end-tag "</owl:NamedIndividual>".
+
+Tried to parse the ontology with the OWLXMLParser parser
+Failed because: Attribute not found: IRI (Line 88)
+
+Tried to parse the ontology with the OWLFunctionalSyntaxOWLParser parser
+Failed because: Encountered " <ERROR> "< "" at line 1, column 1.
+Was expecting:
+    "Ontology" ...
+     (Line 0)
+
+Tried to parse the ontology with the TurtleOntologyParser parser
+Failed because: uk.ac.manchester.cs.owl.owlapi.turtle.parser.ParseException: Encountered "" at line 1, column 1.
+Was expecting one of:
+    
+
+Tried to parse the ontology with the OWLOBOParser parser
+Failed because: org.coode.owlapi.obo.parser.TokenMgrError: Lexical error at line 1, column 22.  Encountered: "\n" (10), after : ""
+
+Tried to parse the ontology with the KRSS2OWLParser parser
+Failed because: de.uulm.ecs.ai.owlapi.krssparser.ParseException: Encountered " ">" "<?xml version=\"1.0\"?> "" at line 1, column 1.
+Was expecting:
+    <EOF> 
+    
+
+Tried to parse the ontology with the ManchesterOWLSyntaxOntologyParser parser
+Failed because: Encountered '<?xml version="1.0"?>' at line 1 column 1.  Expected either 'Ontology:' or 'Prefix:' (Line 1)
+
+/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110323.owl
+
+==> Loaded ontology: Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23279])
+    from: file:/home/cacharya/sandbox/java/owl/trunk/examples/src/main/java/org/coode/owlapi/examples/etsyCategories.20110323.owl
+
+==> Removed ontology Ontology(<http://libereco.dushkindigital.com/ontologies/categories> [Axioms: 27166] [Logical axioms: 23279])
+
