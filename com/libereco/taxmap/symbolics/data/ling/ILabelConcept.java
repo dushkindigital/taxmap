@@ -49,70 +49,70 @@ public interface ILabelConcept extends IIndexedObject
 
 
 	/**
-	 * Returns the sense at index index.
+	 * Returns the meaning at index index.
 	 *
 	 * @param index index
-	 * @return sense at index index
+	 * @return meaning at index index
 	 */
-	ISense getSenseAt(int index);
+	IDenotation getDenotationAt(int index);
 
 	/**
-	 * @return the number of senses
+	 * @return the number of meanings
 	 */
-	int getSenseCount();
+	int getDenotationCount();
 
 	/**
-	 * Returns the index of sense in the receivers senses. 
-	 * If the receiver does not contain sense, -1 will be returned.
+	 * Returns the index of meaning in the receivers meanings. 
+	 * If the receiver does not contain meaning, -1 will be returned.
 	 *
-	 * @param sense a sense to search for
-	 * @return the index of sense in the receivers senses
+	 * @param meaning a meaning to search for
+	 * @return the index of meaning in the receivers meanings
 	 */
-	int getSenseIndex(ISense sense);
+	int getDenotationIndex(IDenotation meaning);
 
 	/**
-	 * @return the iterator over the senses of the query label.
+	 * @return the iterator over the meanings of the query label.
 	 */
-	Iterator<ISense> getSenses();
+	Iterator<IDenotation> getDenotations();
 
 	/**
-	 * @return list of senses of the query label.
+	 * @return list of meanings of the query label.
 	 */
-	List<ISense> getSenseList();
+	List<IDenotation> getDenotationList();
 
 	/**
-	 * Creates a sense and adds it as the last sense.
+	 * Creates a meaning and adds it as the last meaning.
 	 *
 	 * @param pos pos
 	 * @param id id
-	 * @return a newly created sense
+	 * @return a newly created meaning
 	 */
-	ISense createSense(char pos, long id);
+	IDenotation createDenotation(char pos, long id);
 
 	/**
-	 * Adds a sense to the existing list of senses.
-	 * @param sense sense to be added.
+	 * Adds a meaning to the existing list of meanings.
+	 * @param meaning meaning to be added.
 	 */
-	void addSense(ISense sense);
+	void addDenotation(IDenotation meaning);
 
 	/**
-	 * Adds a sense to the existing list of senses at the index.
+	 * Adds a meaning to the existing list of meanings at the index.
 	 *
-	 * @param index index where the sense will be added.
-	 * @param sense sense to be added.
+	 * @param index index where the meaning will be added.
+	 * @param meaning meaning to be added.
 	 */
-	void addSense(int index, ISense sense);
+	void addDenotation(int index, IDenotation meaning);
 
 	/**
-	 * Removes the sense at the index from the existing list of senses.
-	 * @param index index of a sense to be removed.
+	 * Removes the meaning at the index from the existing list of meanings.
+	 * @param index index of a meaning to be removed.
 	 */
-	void removeSense(int index);
+	void removeDenotation(int index);
 
 	/**
-	 * Removes the sense from the existing list of senses.
-	 * @param sense sense to be removed.
+	 * Removes the meaning from the existing list of meanings.
+	 * @param meaning meaning to be removed.
 	 */
-	void removeSense(ISense sense);
+	void removeDenotation(IDenotation meaning);
 }
 

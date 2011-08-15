@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * This class represents atomic concept of label as a
- * concept label and list of associated senses in WordNet.
+ * concept label and list of associated meaningList in WordNet.
  *
  */
 public class LabelConcept extends IndexedObject implements ILabelConcept 
@@ -18,8 +18,8 @@ public class LabelConcept extends IndexedObject implements ILabelConcept
 	private String _token;
 	private String _lemma;
 
-	private ArrayList<ISense> _senses;
-	private static final Iterator<ISense> VOID_SENSE_ITERATOR = Collections.<ISense>emptyList().iterator();
+	private ArrayList<IDenotation> _meaningList;
+	private static final Iterator<IDenotation> VOID_SENSE_ITERATOR = Collections.<IDenotation>emptyList().iterator();
 
 	public LabelConcept() {}
 
@@ -67,59 +67,59 @@ public class LabelConcept extends IndexedObject implements ILabelConcept
 		this._id = id;
 	}
 
-	public ISense getSenseAt(int index) 
+	public IDenotation getDenotationAt(int index) 
 	{
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
-			throw new ArrayIndexOutOfBoundsException("Concept has no sense");
+			throw new ArrayIndexOutOfBoundsException("Concept has no meaning");
 		}
-		return _senses.get(index);
+		return _meaningList.get(index);
 	}
 
-	public int getSenseCount() 
+	public int getDenotationCount() 
 	{
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
 			return 0;
 		} 
 		else 
 		{
-			return _senses.size();
+			return _meaningList.size();
 		}
 	}
 
-	public int getSenseIndex(ISense sense) 
+	public int getDenotationIndex(IDenotation meaning) 
 	{
-		if (sense == null) 
+		if (meaning == null) 
 		{
 			throw new IllegalArgumentException("Argument is null");
 		}
 
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
 			return -1;
 		}
 
-		return _senses.indexOf(sense);
+		return _meaningList.indexOf(meaning);
 	}
 
-	public Iterator<ISense> getSenses() 
+	public Iterator<IDenotation> getDenotations() 
 	{
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
 			return VOID_SENSE_ITERATOR;
 		} 
 		else 
 		{
-			return _senses.iterator();
+			return _meaningList.iterator();
 		}
 	}
 
-	public List<ISense> getSenseList() 
+	public List<IDenotation> getDenotationList() 
 	{
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
-			return Collections.unmodifiableList(_senses);
+			return Collections.unmodifiableList(_meaningList);
 		} 
 		else 
 		{
@@ -127,58 +127,58 @@ public class LabelConcept extends IndexedObject implements ILabelConcept
 		}
 	}
 
-	public ISense createSense(char pos, long id) 
+	public IDenotation createDenotation(char pos, long id) 
 	{
-		ISense sense = new Sense(pos, id);
-		addSense(sense);
-		return sense;
+		IDenotation meaning = new Denotation(pos, id);
+		addDenotation(meaning);
+		return meaning;
 	}
 
-	public void addSense(ISense sense) 
+	public void addDenotation(IDenotation meaning) 
 	{
-		addSense(getSenseCount(), sense);
+		addDenotation(getDenotationCount(), meaning);
 	}
 
-	public void addSense(int index, ISense sense) 
+	public void addDenotation(int index, IDenotation meaning) 
 	{
-		if (sense == null) 
+		if (meaning == null) 
 		{
-			throw new IllegalArgumentException("New sense is null");
+			throw new IllegalArgumentException("New meaning is null");
 		}
 
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
-			_senses = new ArrayList<ISense>();
+			_meaningList = new ArrayList<IDenotation>();
 		}
 
-		if (_senses.indexOf(sense) == -1) 
+		if (_meaningList.indexOf(meaning) == -1) 
 		{
-			_senses.add(index, sense);
+			_meaningList.add(index, meaning);
 		}
 	}
 
-	public void removeSense(int index) 
+	public void removeDenotation(int index) 
 	{
 		// checks children and throws exception in case
-		getSenseAt(index);
-		_senses.remove(index);
+		getDenotationAt(index);
+		_meaningList.remove(index);
 	}
 
-	public void removeSense(ISense sense) 
+	public void removeDenotation(IDenotation meaning) 
 	{
-		if (sense == null) 
+		if (meaning == null) 
 		{
 			throw new IllegalArgumentException("Argument is null");
 		}
 
-		removeSense(getSenseIndex(sense));
+		removeDenotation(getDenotationIndex(meaning));
 	}
 
 	public void trim() 
 	{
-		if (_senses == null) 
+		if (_meaningList == null) 
 		{
-			_senses.trimToSize();
+			_meaningList.trimToSize();
 		}
 	}
 
