@@ -6,40 +6,40 @@ package com.libereco.taxmap.symbolics.data.ling;
  */
 public class Denotation implements IDenotation 
 {
-	char _pos;
+	char _position;
 	long _id;
 
 	private Denotation() {}
 
 	public Denotation(char pos, long id) 
 	{
-		this._pos = pos;
+		this._position = pos;
 		this._id = id;
 	}
 
-	public char getDenotationPos() 
+	public char getPosition() 
 	{
-		return _pos;
+		return _position;
 	}
 
-	public void setDenotationPos(char pos) 
+	public void setPosition(char pos) 
 	{
-		this._pos = pos;
+		this._position = pos;
 	}
 
-	public long getDenotationId() 
+	public long getId() 
 	{
 		return _id;
 	}
 
-	public void setDenotationId(long id) 
+	public void setId(long id) 
 	{
 		this._id = id;
 	}
 
 	public String toString() 
 	{
-		return _pos + "#" + _id;
+		return _position + "#" + _id;
 	}
 
 	public boolean equals(Object that) 
@@ -53,7 +53,7 @@ public class Denotation implements IDenotation
 
 		if (_id != meaning._id) 
 			return false;
-		if (_pos != meaning._pos) 
+		if (_position != meaning._position) 
 			return false;
 
 		return true;
@@ -61,7 +61,7 @@ public class Denotation implements IDenotation
 
 	public int hash() 
 	{
-		int hashval = (int) _pos;
+		int hashval = (int) _position;
 		hashval = 29 * hashval + (int) (_id ^ (_id >>> 31));
 		return hashval;
 	}

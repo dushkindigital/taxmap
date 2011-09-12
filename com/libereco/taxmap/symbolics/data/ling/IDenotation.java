@@ -5,11 +5,11 @@ package com.libereco.taxmap.symbolics.data.ling;
  */
 public interface IDenotation 
 {
-	char getDenotationPos();
+	char getPosition();
 
-	void setDenotationPos(char pos);
+	void setPosition(char pos);
 
-	long getDenotationId();
+	long getId();
 
-	void setDenotationId(long id);
+	void setId(long id);
 }
