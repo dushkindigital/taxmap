@@ -63,10 +63,10 @@ public class ConceptAnalyzer
 
 	public void runTest() throws JWNLException 
 	{
-		AnalyzeMorphology(N_GRAM);
-		GetHypernym(DEVELOP);
-		GetHyponym(SHARK);
-		DeriveAssociation(SHARK, DOLPHIN);
+		// AnalyzeMorphology(N_GRAM);
+		// GetHypernym(DEVELOP);
+		// GetHyponym(SHARK);
+		// DeriveAssociation(SHARK, DOLPHIN);
 		DeriveCommonMeaning(EXCELLENT, FABULOUS);
 	}
 
@@ -112,5 +112,126 @@ public class ConceptAnalyzer
 		}
 		System.out.println("Depth: " + ((Relationship) list.get(0)).getDepth());
 	}
+
+
+  public String[] getHypernyms(String word, String position)
+  {
+    Synset synset = getSynsetAtIndex(word, position, 1);
+    PointerTargetNodeList ptnl = null;
+    try
+    {
+      ptnl = PointerUtils.getInstance().getDirectHypernyms(synset);
+    }
+    catch (NullPointerException e)
+    {
+      // ignore jwnl bug
+      System.err.println("[WARN] JWNL Error: " + word + "/" + position);
+    }
+    catch (JWNLException e)
+    {
+      throw new WordnetError(e);
+    }
+    return ptnlToStrings(word, ptnl);
+  }
+
+
+  public String[] getHypernyms(int id)
+  {
+    Synset synset = getSynsetAtId(id);
+    PointerTargetNodeList ptnl = null;
+    try
+    {
+      ptnl = PointerUtils.getInstance().getDirectHypernyms(synset);
+    }
+    catch (NullPointerException e)
+    {
+      // ignore jwnl bug
+    }
+    catch (JWNLException e)
+    {
+      throw new WordnetError(e);
+    }
+    return ptnlToStrings(null, ptnl);
+  }
+
+  private void getHypernyms(Synset syn, Collection l) throws JWNLException
+  {
+
+    PointerTargetNodeList ptnl = null;
+    try
+    {
+      ptnl = PointerUtils.getInstance().getDirectHypernyms(syn);
+    }
+    catch (NullPointerException e)
+    {
+      // bug from jwnl, ignore
+    }
+    getLemmaSet(ptnl, l);
+  }
+
+  private List getAllHypernyms(IndexWord idw) throws JWNLException
+  {
+    if (idw == null)
+      return null;
+    Synset[] synsets = idw.getSenses();
+    if (synsets == null || synsets.length <= 0)
+      return null;
+
+    int i = 0;
+    List result = new LinkedList();
+    for (; i < synsets.length; i++)
+      getHypernyms(synsets[i], result);
+    return result == null || result.size() < 1 ? null : result;
+  }
+
+
+  public String[] getHypernymTree(int id) throws JWNLException
+  {
+    Synset synset = getSynsetAtId(id);
+    if (synset == null)
+      return new String[]{ROOT};
+    List l = getHypernymTree(synset);
+    return toStrArr(l);
+  }
+
+
+  private List getHypernymTree(Synset synset) throws JWNLException
+  {
+    if (synset == null)
+      return null;
+
+    PointerTargetTree ptt = null;
+    try
+    {
+      ptt = PointerUtils.getInstance().getHypernymTree(synset);
+
+    }
+    catch (NullPointerException e)
+    {
+      // ignore exception; jwnl bug here
+    }
+
+    if (ptt == null)
+      return null;
+
+    List pointerTargetNodeLists = ptt.toList();
+    int count = 0; 
+    List l = new ArrayList();
+    for (Iterator i = pointerTargetNodeLists.iterator(); i.hasNext(); count++)
+    {
+      PointerTargetNodeList ptnl = (PointerTargetNodeList) i.next();
+      List strs = this.getLemmaStrings(ptnl, SYNSET_DELIM, false);
+      for (Iterator it = strs.iterator(); it.hasNext();)
+      {
+        String lemma = (String) it.next();
+        if (lemma.length() > 0 && !l.contains(lemma))
+          l.add(lemma);
+      }
+    }
+    if (l.size() == 1)
+      l.remove(0);
+    return l == null || l.size() < 1 ? null : l;
+  }
+
 }
 
