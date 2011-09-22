@@ -1,0 +1,80 @@
+Sep 22, 2011 2:14:27 AM net.didion.jwnl.util.MessageLog doLog
+INFO: Installing dictionary net.didion.jwnl.dictionary.FileBackedDictionary@1fff7a1e
+AnalyzeMorphology ...
+
+Lemma form for "software development life-cycle": [IndexWord: [Lemma: cycle] [POS: verb]]
+=====================================================================
+
+
+DeriveAssociation ...
+
+Hypernym relationship between "shark" and "dolphin":
+  [PointerTargetNode: [Synset: [Offset: 1482330] [POS: noun] Words: shark -- (any of numerous elongate mostly marine carnivorous fishes with heterocercal caudal fins and tough skin covered with small toothlike scales)] [PointerType: [Label: hypernym] [Key: @] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 1482071] [POS: noun] Words: elasmobranch, selachian -- (any of numerous fishes of the class Chondrichthyes characterized by a cartilaginous skeleton and placoid scales: sharks; rays; skates)] [PointerType: [Label: hypernym] [Key: @] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 1480516] [POS: noun] Words: cartilaginous_fish, chondrichthian -- (fishes in which the skeleton may be calcified but not ossified)] [PointerType: [Label: hypernym] [Key: @] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2512053] [POS: noun] Words: fish -- (any of various mostly cold-blooded aquatic vertebrates usually having scales and breathing through gills; "the shark is a large fish"; "in the living room there was a tank of colorful fish")] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2514825] [POS: noun] Words: bony_fish -- (any fish of the class Osteichthyes)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2528163] [POS: noun] Words: teleost_fish, teleost, teleostan -- (a bony fish of the subclass Teleostei)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2552171] [POS: noun] Words: spiny-finned_fish, acanthopterygian -- (a teleost fish with fins that are supported by sharp inflexible rays)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2554730] [POS: noun] Words: percoid_fish, percoid, percoidean -- (any of numerous spiny-finned fishes of the order Perciformes)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+  [PointerTargetNode: [Synset: [Offset: 2581957] [POS: noun] Words: dolphinfish, dolphin, mahimahi -- (large slender food and game fish widely distributed in warm seas (especially around Hawaii))] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb]]
+Common Parent Index: 3
+Depth: 8
+=====================================================================
+
+
+GetHyponym ...
+
+Hyponyms of "shark":
+[PointerTargetTreeNode: [Synset: [Offset: 1482330] [POS: noun] Words: shark -- (any of numerous elongate mostly marine carnivorous fishes with heterocercal caudal fins and tough skin covered with small toothlike scales)] null [Has Parent? true] [Has Children? true] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1483021] [POS: noun] Words: cow_shark, six-gilled_shark, Hexanchus_griseus -- (large primitive shark widely distributed in warm seas)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1483522] [POS: noun] Words: mackerel_shark -- (fierce pelagic and oceanic sharks)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? true] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1483830] [POS: noun] Words: porbeagle, Lamna_nasus -- (voracious pointed-nose shark of northern Atlantic and Pacific)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1484097] [POS: noun] Words: mako, mako_shark -- (powerful mackerel shark of the Atlantic and Pacific)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? true] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1484285] [POS: noun] Words: shortfin_mako, Isurus_oxyrhincus -- (very swift active bluish shark found worldwide in warm waters; important game fish)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1484447] [POS: noun] Words: longfin_mako, Isurus_paucus -- (similar to shortfin mako but darker blue)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1484562] [POS: noun] Words: bonito_shark, blue_pointed, Isurus_glaucus -- (common blue-grey shark of southwest Pacific; sport and food fish)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1484850] [POS: noun] Words: great_white_shark, white_shark, man-eater, man-eating_shark, Carcharodon_carcharias -- (large aggressive shark widespread in warm seas; known to attack humans)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1485479] [POS: noun] Words: basking_shark, Cetorhinus_maximus -- (large harmless plankton-eating northern shark; often swims slowly or floats at the sea surface)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1486010] [POS: noun] Words: thresher, thrasher, thresher_shark, fox_shark, Alopius_vulpinus -- (large pelagic shark of warm seas with a whiplike tail used to round up small fish on which to feed)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1486540] [POS: noun] Words: carpet_shark, Orectolobus_barbatus -- (shark of the western Pacific with flattened body and mottled skin)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1486838] [POS: noun] Words: nurse_shark, Ginglymostoma_cirratum -- (small bottom-dwelling shark of warm shallow waters on both coasts of North America and South America and from southeast Asia to Australia)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1487506] [POS: noun] Words: sand_tiger, sand_shark, Carcharias_taurus, Odontaspis_taurus -- (shallow-water shark with sharp jagged teeth found on both sides of Atlantic; sometimes dangerous to swimmers)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1488038] [POS: noun] Words: whale_shark, Rhincodon_typus -- (large spotted shark of warm surface waters worldwide; resembles a whale and feeds chiefly on plankton)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1488385] [POS: noun] Words: cat_shark -- (small bottom-dwelling sharks with cat-like eyes; found along continental slopes)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1488918] [POS: noun] Words: requiem_shark -- (any of numerous sharks from small relatively harmless bottom-dwellers to large dangerous oceanic and coastal species)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? true] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1489501] [POS: noun] Words: bull_shark, cub_shark, Carcharhinus_leucas -- (a most common shark in temperate and tropical coastal waters worldwide; heavy-bodied and dangerous)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1489709] [POS: noun] Words: sandbar_shark, Carcharhinus_plumbeus -- (most common grey shark along coasts of middle Atlantic states; sluggish and occasionally caught by fishermen)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1489920] [POS: noun] Words: blacktip_shark, sandbar_shark, Carcharhinus_limbatus -- (widely distributed shallow-water shark with fins seemingly dipped in ink)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1490112] [POS: noun] Words: whitetip_shark, oceanic_whitetip_shark, white-tipped_shark, Carcharinus_longimanus -- (large deep-water shark with white-tipped dorsal fin; worldwide distribution; most dangerous shark)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1490360] [POS: noun] Words: dusky_shark, Carcharhinus_obscurus -- (relatively slender blue-grey shark; nearly worldwide in tropical and temperate waters)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1490670] [POS: noun] Words: lemon_shark, Negaprion_brevirostris -- (common shallow-water schooling shark of the Atlantic from North Carolina to Brazil and off west Africa; dangerous)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1491006] [POS: noun] Words: blue_shark, great_blue_shark, Prionace_glauca -- (slender cosmopolitan, pelagic shark; blue body shades to white belly; dangerous especially during maritime disasters)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1491361] [POS: noun] Words: tiger_shark, Galeocerdo_cuvieri -- (large dangerous warm-water shark with striped or spotted body)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1491661] [POS: noun] Words: soupfin_shark, soupfin, soup-fin, Galeorhinus_zyopterus -- (Pacific shark valued for its fins (used by Chinese in soup) and liver (rich in vitamin A))] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1491874] [POS: noun] Words: dogfish -- (any of several small sharks)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? true] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1492357] [POS: noun] Words: smooth_dogfish -- (small bottom-dwelling shark found along both Atlantic coasts)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? true] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1492569] [POS: noun] Words: smoothhound, smoothhound_shark, Mustelus_mustelus -- (smooth dogfish of European coastal waters)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1492708] [POS: noun] Words: American_smooth_dogfish, Mustelus_canis -- (found along the Atlantic coast of the Americas)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1492860] [POS: noun] Words: Florida_smoothhound, Mustelus_norrisi -- (found from the northern Gulf of Mexico to Brazil)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1493146] [POS: noun] Words: whitetip_shark, reef_whitetip_shark, Triaenodon_obseus -- (smooth dogfish of Pacific and Indian Oceans and Red Sea having white-tipped dorsal and caudal fins)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1493541] [POS: noun] Words: spiny_dogfish -- (small bottom-dwelling dogfishes)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? true] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1493829] [POS: noun] Words: Atlantic_spiny_dogfish, Squalus_acanthias -- (destructive dogfish of the Atlantic coastal waters of America and Europe; widely used in anatomy classes)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+      [PointerTargetTreeNode: [Synset: [Offset: 1494041] [POS: noun] Words: Pacific_spiny_dogfish, Squalus_suckleyi -- (dogfish of Pacific coast of North America)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1494475] [POS: noun] Words: hammerhead, hammerhead_shark -- (medium-sized live-bearing shark with eyes at either end of a flattened hammer-shaped head; worldwide in warm waters; can be dangerous)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? true] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1494757] [POS: noun] Words: smooth_hammerhead, Sphyrna_zygaena -- (fished for the hides and vitamin-rich liver)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1494882] [POS: noun] Words: smalleye_hammerhead, Sphyrna_tudes -- (fished for the hide and vitamin-rich liver)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+    [PointerTargetTreeNode: [Synset: [Offset: 1495006] [POS: noun] Words: shovelhead, bonnethead, bonnet_shark, Sphyrna_tiburo -- (small harmless hammerhead having a spade-shaped head; abundant in bays and estuaries)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? false] [Has Children? false] [Has Pointers? false]]
+  [PointerTargetTreeNode: [Synset: [Offset: 1495493] [POS: noun] Words: angel_shark, angelfish, Squatina_squatina, monkfish -- (sharks with broad flat bodies and winglike pectoral fins but that swim the way sharks do)] [PointerType: [Label: hyponym] [Key: ~] Applies To: noun, verb] [Has Parent? true] [Has Children? false] [Has Pointers? false]]
+=====================================================================
+
+
+GetHypernym ...
+
+Iterating through elements of Java LinkedList using ListIterator in forward direction...
+motor-vehicle
+automotive-vehicle
+wheeled-vehicle
+compartment
+=====================================================================
+
