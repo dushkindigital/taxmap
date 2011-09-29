@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.semantics.wordnet;
 
 import java.io.FileInputStream;
@@ -27,6 +35,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Implements a Semantics and Denotation Comparator using WordNet.
+ * @author Chiranjit Acharya
  */
 public class WordNetReader extends Environment implements ISemantics, IDenotationComparator 
 {

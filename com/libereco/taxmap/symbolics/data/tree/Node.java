@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.data.tree;
 
 import javax.swing.tree.TreeNode;
@@ -13,6 +21,8 @@ import com.libereco.taxmap.symbolics.data.ling.ILabelConcept;
  * (1) logical (NodeConcept predicates and LabelConcept predicates),
  * (2) linguistic (WordNet senses) and 
  * (3) structural information (parent and children of a node).
+ *
+ * @author Chiranjit Acharya
  */
 public class Node extends IndexedObject implements INode, INodeCore 
 {

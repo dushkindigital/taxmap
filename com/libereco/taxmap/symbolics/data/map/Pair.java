@@ -1,9 +1,18 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics;
 
 import java.io.Serializable;
 
 /**
  * A container class representing a pair of objects.
+ * @author Chiranjit Acharya
  */
 public class Pair<T1, T2> implements Serializable
 {

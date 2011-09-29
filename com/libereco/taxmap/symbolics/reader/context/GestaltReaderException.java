@@ -6,23 +6,24 @@
   *  All rights reserved.
   **/
 
-package com.libereco.taxmap.symbolics.semantics;
+package com.libereco.taxmap.symbolics.reader.context;
 
 import com.libereco.taxmap.symbolics.TaxMapException;
 
 /**
- * Exception class for Denotations
+ * Exception class for Gestalt Readers.
  * @author Chiranjit Acharya
  */
-public class DenotationException extends TaxMapException 
+public class GestaltReaderException extends TaxMapException 
 {
-	public DenotationException(String errorMessage) 
+	public GestaltReaderException(String errorMessage) 
 	{
 		super(errorMessage);
 	}
 
-	public DenotationException(String errorMessage, Throwable reason) 
+	public GestaltReaderException(String errorMessage, Throwable reason) 
 	{
 		super(errorMessage, reason);
 	}
 }
+

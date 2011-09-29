@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.reader.gestalt;
 
 import java.util.Set;
@@ -21,6 +29,7 @@ import com.libereco.taxmap.symbolics.reader.IReader;
 
 /**
  * Reads a gestalt using W3C standardized OWL API
+ * @author Chiranjit Acharya
  */
 public class OWLGestaltReader extends GestaltReader implements IGestaltReader 
 {

@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.data.map;
 
 import com.libereco.taxmap.symbolics.config.Configurable;
@@ -10,6 +18,7 @@ import java.util.*;
 
 /**
  * Implementation of the HashMap class for contextual relations. 
+ * @author Chiranjit Acharya
  */
 public class HashMap<T> extends Map<T> implements IContextRelation<T>, IRelationGenerator 
 {

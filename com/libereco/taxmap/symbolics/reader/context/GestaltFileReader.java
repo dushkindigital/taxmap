@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.reader.gestalt;
 
 import java.io.FileInputStream;
@@ -11,6 +19,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Base class for the functionality of reading from a file.
+ * @author Chiranjit Acharya
  */
 public abstract class GestaltFileReader extends GestaltReader implements IGestaltReader 
 {

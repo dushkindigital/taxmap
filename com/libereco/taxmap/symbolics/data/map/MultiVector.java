@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics;
 
 
@@ -5,7 +13,8 @@ package com.libereco.taxmap.symbolics;
  * This class represents a multidimensional array 
  * whose dimensions are specified during construction.
  * The multidimensional array is modeled by an underlying one dimensional array.
- * 
+ * @author Chiranjit Acharya
+ *
  * @param <T> the class of the array elements
  */
 public class MultiVector<T> 

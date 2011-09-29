@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics;
 
 import java.io.File;
@@ -34,7 +42,7 @@ import com.libereco.taxmap.symbolics.util.TaxMapUtil;
 
 /**
  * TaxMapController controls the process of comparison, reads contexts and performs other auxiliary work.
- *
+ * @author Chiranjit Acharya
  */
 public class TaxMapController extends Configurable implements ITaxMapController {
 

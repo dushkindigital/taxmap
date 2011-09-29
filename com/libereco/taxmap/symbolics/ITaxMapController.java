@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics;
 
 import com.libereco.taxmap.symbolics.config.*;
@@ -10,7 +18,7 @@ import com.libereco.taxmap.symbolics.writer.*;
  * Top level interface for taxonomy mapping functionalities.
  * The following code can be used in order to obtain an instance of ITaxMapController interface.
  * ITaxMapController tmc = com.libereco.taxmap.symbolics.TaxMapController.getInstance();
- *
+ * @author Chiranjit Acharya
  */
 public interface ITaxMapController extends IConfigurable {
 

@@ -1,8 +1,15 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.data.map;
 
 import com.libereco.taxmap.symbolics.config.Configurable;
 import com.libereco.taxmap.symbolics.config.ConfigurableException;
-import it.unitn.disi.smatch.data.ling.IAtomicConceptOfLabel;
 import com.libereco.taxmap.symbolics.data.matrix.IIndexedObject;
 import com.libereco.taxmap.symbolics.data.matrix.ITaxMapMatrix;
 import com.libereco.taxmap.symbolics.data.matrix.ITaxMapGenerator;
@@ -12,7 +19,8 @@ import com.libereco.taxmap.symbolics.data.tree.INode;
 import java.util.*;
 
 /**
- * represents a mapping using a bilinear data structure. 
+ * represents a mapping using a bilinear data structure.
+ * @author Chiranjit Acharya
  */
 public class BilinearMap<T extends IIndexedObject> extends Map<T> implements IContextRelation<T>, IRelationGenerator 
 {

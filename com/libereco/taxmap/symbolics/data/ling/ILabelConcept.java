@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.data.ling;
 
 import java.util.Iterator;
@@ -11,6 +19,7 @@ import com.libereco.taxmap.symbolics.data.IIndexedObject;
  * In case of unigram tokens, the correspondence is one-to-one; 
  * In case of multigram tokens, the entire n-gram can be represented as a singlular concept.
  *
+ * @author Chiranjit Acharya
  */
 public interface ILabelConcept extends IIndexedObject
 {

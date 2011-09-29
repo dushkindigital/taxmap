@@ -1,3 +1,11 @@
+/**
+  *  Copyright (C) 2011 Dushkin Digital Media, LLC
+  *  500 E 77th Street, Ste. 806
+  *  New York, NY 10162
+  *
+  *  All rights reserved.
+  **/
+
 package com.libereco.taxmap.symbolics.config;
 
 import java.util.HashMap;
@@ -12,6 +20,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Base class for environment variables in TaxMap module.
+ * @author Chiranjit Acharya
  */
 public abstract class Environment implements IEnvironment 
 {
