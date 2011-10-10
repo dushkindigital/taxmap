@@ -64,13 +64,18 @@ public class WordNetCore implements IWordNetCore
 	/** String constant for Adverb part-of-speech */
 	public static final String ADV = "r";
 
+	/**
+	 * @invisible debug flag to toggle verbose output
+	 */
 	public static final boolean DBUG = false;
 
 	private static final String ROOT = "entity";
 
+	/** @invisible */
 	public static String m_WordNetHome;
 	public static String m_ConfigFile;
 
+	/** @invisible */
 	public static String SLASH;
 
 	protected WordNetFilters m_WNFilters;
@@ -130,7 +135,7 @@ public class WordNetCore implements IWordNetCore
 			}
 			catch (Exception e)
 			{
-				throw new WordNetError("Unable to load Wordnet " + "with $WORDNET_HOME=" + m_WordNetHome + " & CONF_FILE=" + ConfigFile, e);
+				throw new WordNetException("Unable to load Wordnet " + "with $WORDNET_HOME=" + m_WordNetHome + " & CONF_FILE=" + ConfigFile, e);
 			}
 		}
 		if (this.m_Dictionary == null)
@@ -139,225 +144,243 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * for remote creation only
+	 * 
+	 * @invisible
 	 */
 	public static WordNetCore createRemote(Map params)
 	{
 		return new WordNetCore();
 	}
 
+	// METHODS =====================================================
 
 	/**
-	 * Returns an iterator over all words of the specified 'pos'
+	 * Returns an iterator over all words of the specified 'PartsOfSpeech'
 	 */
-	public Iterator iterator(String pos)
+	public Iterator iterator(String PartsOfSpeech)
 	{
-		return GetFilters().lemmaIterator(m_Dictionary, convertPos(pos));
+		return GetFilters().lemmaIterator(m_Dictionary, TransformPartsOfSpeech(PartsOfSpeech));
 	}
 
 
 	/**
 	 * Returns up to <code>maxResults</code> full anagram matches for the
-	 * specified <code>Unigram</code> and <code>pos</code>
+	 * specified <code>Unigram</code> and <code>PartsOfSpeech</code>
+	 * <p>
+	 * Example: 'table' returns 'bleat' (but not 'tale').
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetAnagrams(String Unigram, String Position, int maxResults)
+	public String[] CreatePermutations(String Unigram, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(ANAGRAMS, Unigram, convertPos(Position), maxResults);
+		return Filter(ANAGRAMS, Unigram, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
 	 * Returns all full anagram matches for the specified <code>Unigram</code> and
-	 * <code>pos</code>
+	 * <code>PartsOfSpeech</code>
+	 * <p>
+	 * Example: 'table' returns 'bleat' (but not 'tale').
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetAnagrams(String Unigram, String Position)
+	public String[] CreatePermutations(String Unigram, String PartsOfSpeech)
 	{
-		return GetAnagrams(Unigram, Position, Integer.MAX_VALUE);
+		return CreatePermutations(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * where each contains the given <code>Unigram</code>
+	 * <p>
+	 * Example: 'table' returns 'bleat' (but not 'tale').
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetContains(String Unigram, String Position, int maxResults)
+	public String[] CreateContainments(String Unigram, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(CONTAINS, Unigram, convertPos(Position), maxResults);
+		return Filter(CONTAINS, Unigram, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
 	 * Returns all 'contains' matches for the specified <code>Unigram</code> and
-	 * <code>pos</code>
+	 * <code>PartsOfSpeech</code>
+	 * <p>
+	 * Example: 'table' returns 'bleat' (but not 'tale').
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetContains(String Unigram, String Position)
+	public String[] CreateContainments(String Unigram, String PartsOfSpeech)
 	{
-		return GetContains(Unigram, Position, Integer.MAX_VALUE);
+		return CreateContainments(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * ending with the given <code>Unigram</code>.
 	 * <p>
 	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetEndsWith(String Unigram, String Position, int maxResults)
+	public String[] GetEndsWith(String Unigram, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(ENDS_WITH, Unigram, convertPos(Position), maxResults);
+		return Filter(ENDS_WITH, Unigram, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * ending with the given <code>Unigram</code>.
+	 * <p>
+	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetEndsWith(String Unigram, String Position)
+	public String[] GetEndsWith(String Unigram, String PartsOfSpeech)
 	{
-		return GetEndsWith(Unigram, Position, Integer.MAX_VALUE);
+		return GetEndsWith(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * starting with the given <code>Unigram</code>.
+	 * <p>
+	 * Example: 'turn' returns 'turntable'
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetStartsWith(String Unigram, String Position, int maxResults)
+	public String[] GetStartsWith(String Unigram, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(STARTS_WITH, Unigram, convertPos(Position), maxResults);
+		return Filter(STARTS_WITH, Unigram, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * starting with the given <code>Unigram</code>.
+	 * <p>
+	 * Example: 'turn' returns 'turntable'
 	 * 
 	 * @param Unigram
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetStartsWith(String Unigram, String Position)
+	public String[] GetStartsWith(String Unigram, String PartsOfSpeech)
 	{
-		return GetStartsWith(Unigram, Position, Integer.MAX_VALUE);
+		return GetStartsWith(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * matching the the given regular expression <code>pattern</code>.
 	 * <p>
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 * @see java.util.regex.Pattern
 	 */
-	public String[] GetRegexMatch(String pattern, String Position, int maxResults)
+	public String[] GetRegexMatch(String pattern, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(REGEX_MATCH, pattern, convertPos(Position), maxResults);
+		return Filter(REGEX_MATCH, pattern, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
+	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @see java.util.regex.Pattern
 	 */
-	public String[] GetRegexMatch(String pattern, String Position)
+	public String[] GetRegexMatch(String pattern, String PartsOfSpeech)
 	{
-		return GetRegexMatch(pattern, Position, Integer.MAX_VALUE);
+		return GetRegexMatch(pattern, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * that match the soundex code of the given <code>Unigram</code>.
 	 * <p>
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetSoundsLike(String pattern, String Position, int maxResults)
+	public String[] GetSoundsLike(String pattern, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(SOUNDS_LIKE, pattern, convertPos(Position), maxResults);
+		return Filter(SOUNDS_LIKE, pattern, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * that match the soundex code of the given <code>Unigram</code>.
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetSoundsLike(String pattern, String Position)
+	public String[] GetSoundsLike(String pattern, String PartsOfSpeech)
 	{
-		return GetSoundsLike(pattern, Position, Integer.MAX_VALUE);
+		return GetSoundsLike(pattern, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * matching a wildcard <code>pattern</code>,<br>
 	 * with * '*' equals any number of characters, <br>
 	 * and '?' equals any single character.
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	public String[] GetWildcardMatch(String pattern, String Position, int maxResults)
+	public String[] GetWildcardMatch(String pattern, String PartsOfSpeech, int maxResults)
 	{
-		return Filter(WILDCARD_MATCH, pattern, convertPos(Position), maxResults);
+		return Filter(WILDCARD_MATCH, pattern, TransformPartsOfSpeech(PartsOfSpeech), maxResults);
 	}
 
 	/**
-	 * Returns up to <code>maxResults</code> of the specified <code>pos</code>
+	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * matching a wildcard <code>pattern</code>,<br>
 	 * with '*' representing any number of characters, <br>
 	 * and '?' equals any single character..
 	 * 
 	 * @param pattern
-	 * @param Position
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetWildcardMatch(String pattern, String Position)
+	public String[] GetWildcardMatch(String pattern, String PartsOfSpeech)
 	{
-		return GetWildcardMatch(pattern, Position, Integer.MAX_VALUE);
+		return GetWildcardMatch(pattern, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
 	 * Return up to <code>maxResults</code> instances of specified
-	 * <code>Position</code> matching the Filter specified with
+	 * <code>PartsOfSpeech</code> matching the Filter specified with
 	 * <code>filterFlag</code>
 	 * 
 	 * @param filterFlag
 	 * @param Unigram
-	 * @param pos
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 * @invisible
 	 */
-	public String[] Filter(int filterFlag, String Unigram, POS pos, int maxResults)
+	public String[] Filter(int filterFlag, String Unigram, POS PartsOfSpeech, int maxResults)
 	{
-		return GetStringVectorFromList(GetFilters().Filter(filterFlag, Unigram, pos, maxResults));
+		return GetStringVectorFromList(GetFilters().Filter(filterFlag, Unigram, PartsOfSpeech, maxResults));
 	}
 
-	public String[] Filter(int filterFlag, String Unigram, POS pos)
+	public String[] Filter(int filterFlag, String Unigram, POS PartsOfSpeech)
 	{
-		return Filter(filterFlag, Unigram, pos, Integer.MAX_VALUE);
+		return Filter(filterFlag, Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
@@ -366,13 +389,13 @@ public class WordNetCore implements IWordNetCore
 	 * 
 	 * @param filterFlags
 	 * @param Unigrams
-	 * @param pos
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 * @invisible
 	 */
-	public String[] FilterByOR(int[] filterFlags, String[] Unigrams, POS pos, int maxResults)
+	public String[] FilterByOR(int[] filterFlags, String[] Unigrams, POS PartsOfSpeech, int maxResults)
 	{
-		return GetStringVectorFromList(GetFilters().FilterByOR(filterFlags, Unigrams, pos, maxResults));
+		return GetStringVectorFromList(GetFilters().FilterByOR(filterFlags, Unigrams, PartsOfSpeech, maxResults));
 	}
 
 	private WordNetFilters GetFilters()
@@ -382,9 +405,9 @@ public class WordNetCore implements IWordNetCore
 		return m_WNFilters;
 	}
 
-	public String[] FilterByOR(int[] filterFlag, String[] Unigram, POS pos)
+	public String[] FilterByOR(int[] filterFlag, String[] Unigram, POS PartsOfSpeech)
 	{
-		return FilterByOR(filterFlag, Unigram, pos, Integer.MAX_VALUE);
+		return FilterByOR(filterFlag, Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
@@ -393,24 +416,24 @@ public class WordNetCore implements IWordNetCore
 	 * 
 	 * @param filterFlags
 	 * @param Unigrams
-	 * @param pos
+	 * @param PartsOfSpeech
 	 * @param maxResults
 	 */
-	private String[] FilterByAND(int[] filterFlags, String[] Unigrams, POS pos, int maxResults)
+	private String[] FilterByAND(int[] filterFlags, String[] Unigrams, POS PartsOfSpeech, int maxResults)
 	{
-		return GetStringVectorFromList(GetFilters().FilterByAND(filterFlags, Unigrams, pos, maxResults));
+		return GetStringVectorFromList(GetFilters().FilterByAND(filterFlags, Unigrams, PartsOfSpeech, maxResults));
 	}
 
-	private String[] FilterByAND(int[] filterFlag, String[] Unigram, POS pos)
+	private String[] FilterByAND(int[] filterFlag, String[] Unigram, POS PartsOfSpeech)
 	{
-		return FilterByAND(filterFlag, Unigram, pos, Integer.MAX_VALUE);
+		return FilterByAND(filterFlag, Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 
 	/**
 	 * Called by the parent calling context upon shutdown
 	 */
-	public void dispose()
+	public void ClearResource()
 	{
 		if (m_Dictionary != null)
 			m_Dictionary.close();
@@ -432,59 +455,59 @@ public class WordNetCore implements IWordNetCore
 	// -------------------------- MAIN METHODS ----------------------------
 	private List GetSynsetList(int id)
 	{
-		Synset syns = GetSynsetAtId(id);
+		Synset SynsetInstance = GetSynsetAtId(id);
 
-		if (syns == null || syns.getWordsSize() < 1)
+		if (SynsetInstance == null || SynsetInstance.getWordsSize() < 1)
 			return null;
 		List l = new LinkedList();
-		AddLemmas(syns.getWords(), l);
+		AddLemmas(SynsetInstance.getWords(), l);
 		return l;
 	}
 
 	private Synset GetSynsetAtId(int id)
 	{
-		POS pos = null;
+		POS PartsOfSpeech = null;
 		String idStr = Integer.toString(id);
-		int posDigit = Integer.parseInt(idStr.substring(0, 1));
+		int PartsOfSpeechDigit = Integer.parseInt(idStr.substring(0, 1));
 		long offset = Long.parseLong(idStr.substring(1));
-		switch (posDigit) {
+		switch (PartsOfSpeechDigit) {
 		case 9:
-			pos = POS.NOUN;
+			PartsOfSpeech = POS.NOUN;
 			break;
 		case 8:
-			pos = POS.VERB;
+			PartsOfSpeech = POS.VERB;
 			break;
 		case 7:
-			pos = POS.ADJECTIVE;
+			PartsOfSpeech = POS.ADJECTIVE;
 			break;
 		case 6:
-			pos = POS.ADVERB;
+			PartsOfSpeech = POS.ADVERB;
 			break;
 		}
 		try
 		{
-			return m_Dictionary.getSynsetAt(pos, offset);
+			return m_Dictionary.getSynsetAt(PartsOfSpeech, offset);
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
 	}
 
 	/**
 	 * Returns String[] of unique ids, one for each 'sense' of <code>Unigram</code>
-	 * with <code>pos</code>, or null if none are found.
+	 * with <code>PartsOfSpeech</code>, or null if none are found.
 	 */
-	public int[] GetSenseIds(String Unigram, String Position)
+	public int[] GetSenseIds(String Unigram, String PartsOfSpeech)
 	{
-		POS pos = convertPos(Position);
-		IndexWord XWord = FindIndexWord(pos, Word);
+		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Word);
 		return GetSenseIds(XWord);
 	}
 
 	/**
 	 * Returns String[] of unique ids, one for each sense of <code>Unigram</code>
-	 * with <code>pos</code>, or null if none are found.
+	 * with <code>PartsOfSpeech</code>, or null if none are found.
 	 */
 	public int[] GetSenseIds(IndexWord XWord)
 	{
@@ -501,44 +524,44 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (Exception e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
 		return result;
 	}
 
-	private int toId(POS wnpos, long offset)
+	private int toId(POS wnPartsOfSpeech, long offset)
 	{
-		int posDigit = -1;
-		if (wnpos == POS.NOUN)
-			posDigit = 9;
-		else if (wnpos == POS.VERB)
-			posDigit = 8;
-		else if (wnpos == POS.ADJECTIVE)
-			posDigit = 7;
-		else if (wnpos == POS.ADVERB)
-			posDigit = 6;
+		int PartsOfSpeechDigit = -1;
+		if (wnPartsOfSpeech == POS.NOUN)
+			PartsOfSpeechDigit = 9;
+		else if (wnPartsOfSpeech == POS.VERB)
+			PartsOfSpeechDigit = 8;
+		else if (wnPartsOfSpeech == POS.ADJECTIVE)
+			PartsOfSpeechDigit = 7;
+		else if (wnPartsOfSpeech == POS.ADVERB)
+			PartsOfSpeechDigit = 6;
 		else
-			throw new WordNetError("Invalid POS type: " + wnpos);
-		return Integer.parseInt((Integer.toString(posDigit) + offset));
+			throw new WordNetException("Invalid POS type: " + wnPartsOfSpeech);
+		return Integer.parseInt((Integer.toString(PartsOfSpeechDigit) + offset));
 	}
 
 	/**
-	 * Returns full gloss for !st sense of 'Unigram' with 'pos' or null if not found
+	 * Returns full gloss for !st sense of 'Unigram' with 'PartsOfSpeech' or null if not found
 	 */
-	public String GetGloss(String Unigram, String pos)
+	public String GetGloss(String Unigram, String PartsOfSpeech)
 	{
-		Synset SynsetInstance = GetSynsetAtIndex(Unigram, pos, 1);
+		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
 		return GetGloss(SynsetInstance);
 	}
 
 	/**
-	 * Returns glosses for all senses of 'Unigram' with 'pos', or null if not found
+	 * Returns glosses for all senses of 'Unigram' with 'PartsOfSpeech', or null if not found
 	 */
-	public String[] GetAllGlosses(String Unigram, String pos)
+	public String[] GetAllGlosses(String Unigram, String PartsOfSpeech)
 	{
 		List glosses = new LinkedList();
 
-		Synset[] SynsetInstances = allSynsets(Unigram, pos);
+		Synset[] SynsetInstances = GetAllSynsets(Unigram, PartsOfSpeech);
 		for (int i = 0; i < SynsetInstances.length; i++)
 		{
 			String gloss = GetGloss(SynsetInstances[i]);
@@ -578,34 +601,34 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Returns description for <code>Unigram</code> with <code>pos</code> or null if
+	 * Returns description for <code>Unigram</code> with <code>PartsOfSpeech</code> or null if
 	 * not found
 	 */
-	public String GetDescription(String Unigram, String pos)
+	public String GetDescription(String Unigram, String PartsOfSpeech)
 	{
-		String gloss = GetGloss(Unigram, pos);
+		String gloss = GetGloss(Unigram, PartsOfSpeech);
 		return WordNetUtil.parseDescription(gloss);
 	}
 
 	/**
 	 * Returns all examples for 1st sense of <code>Unigram</code> with
-	 * <code>pos</code>, or null if not found
+	 * <code>PartsOfSpeech</code>, or null if not found
 	 */
-	public String[] GetExamples(CharSequence Unigram, CharSequence pos)
+	public String[] GetExamples(CharSequence Unigram, CharSequence PartsOfSpeech)
 	{
-		Synset SynsetInstance = GetSynsetAtIndex(Unigram, pos, 1);
+		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
 		List l = GetExamples(SynsetInstance);
 		return GetStringVectorFromList(l);
 	}
 
 	/**
 	 * Return a random example from the set of examples from all senses of
-	 * <code>Unigram</code> with <code>pos</code>, assuming they contain
+	 * <code>Unigram</code> with <code>PartsOfSpeech</code>, assuming they contain
 	 * <code>Unigram</code>, or else null if not found
 	 */
-	public String GetAnyExample(CharSequence Unigram, CharSequence pos)
+	public String GetAnyExample(CharSequence Unigram, CharSequence PartsOfSpeech)
 	{
-		String[] all = GetAllExamples(Unigram, pos);
+		String[] all = GetAllExamples(Unigram, PartsOfSpeech);
 		int rand = (int) (Math.random() * all.length);
 		return all[rand];
 	}
@@ -623,22 +646,22 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Returns examples for all senses of <code>Unigram</code> with <code>pos</code>
+	 * Returns examples for all senses of <code>Unigram</code> with <code>PartsOfSpeech</code>
 	 * if they contain the <code>Unigram</code>, else null if not found
 	 */
-	public String[] GetAllExamples(CharSequence Unigram, CharSequence pos)
+	public String[] GetAllExamples(CharSequence Unigram, CharSequence PartsOfSpeech)
 	{
-		Synset[] syns = allSynsets(Unigram, pos);
-		if (syns == null || syns.length < 1)
+		Synset[] SynsetInstances = GetAllSynsets(Unigram, PartsOfSpeech);
+		if (SynsetInstances == null || syns.length < 1)
 			return null;
 		List l = new LinkedList();
-		for (int i = 0; i < syns.length; i++)
+		for (int i = 0; i < SynsetInstances.length; i++)
 		{
-			if (syns[i] != null)
+			if (SynsetInstances[i] != null)
 			{
-				for (int j = 0; j < syns.length; j++)
+				for (int j = 0; j < SynsetInstances.length; j++)
 				{
-					List examples = GetExamples(syns[i]);
+					List examples = GetExamples(SynsetInstances[i]);
 					if (examples == null)
 						continue;
 					for (Iterator k = examples.iterator(); k.hasNext();)
@@ -664,7 +687,7 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Returns an unordered String[] containing the synset, hyponyms, similars,
+	 * Returns an unordered String[] containing the SynsetInstanceset, hyponyms, similars,
 	 * alsoSees, and coordinate terms (checking each in order), or null if not
 	 * found.
 	 */
@@ -679,14 +702,24 @@ public class WordNetCore implements IWordNetCore
 		result = GetHyponymTree(SenseId);
 		this.AddSynsetsToSet(result, set);
 
+		/*
+		 * result = GetHypernyms(SenseId); this.AddSynsetsToSet(result, set);
+		 */
+		// System.err.println("Hypernyms: "+WordNetUtil.asList(result));
+
 		result = GetSimilar(SenseId);
 		this.AddSynsetsToSet(result, set);
+		// System.err.println("Similar: "+WordNetUtil.asList(result));
 
 		result = GetCoordinates(SenseId);
 		this.AddSynsetsToSet(result, set);
+		// System.err.println("Coordinates: "+WordNetUtil.asList(result));
 
 		result = GetAlsoSees(SenseId);
 		this.AddSynsetsToSet(result, set);
+		// System.err.println("AlsoSees: "+WordNetUtil.asList(result));
+
+		// System.err.println("=======================================");
 
 		return setToStrings(set, maxResults, true);
 	}
@@ -699,25 +732,25 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns an unordered String[] containing the synset, hyponyms, similars,
 	 * alsoSees, and coordinate terms (checking each in order) for all senses of
-	 * <code>Unigram</code> with <code>pos</code>, or null if not found
+	 * <code>Unigram</code> with <code>PartsOfSpeech</code>, or null if not found
 	 */
-	public String[] GetSynonyms(String Unigram, String Position, int maxResults)
+	public String[] GetSynonyms(String Unigram, String PartsOfSpeech, int maxResults)
 	{
 		String[] result = null;
 		Set set = new HashSet();
 
-		result = GetSynset(Unigram, Position, false);
+		result = GetSynset(Unigram, PartsOfSpeech, false);
 		this.AddSynsetsToSet(result, set);
-		result = GetHypernyms(Unigram, Position);
-		this.AddSynsetsToSet(result, set);
-
-		result = GetSimilar(Unigram, Position);
+		result = GetHypernyms(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
-		result = GetAlsoSees(Unigram, Position);
+		result = GetSimilar(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
-		result = GetCoordinates(Unigram, Position);
+		result = GetAlsoSees(Unigram, PartsOfSpeech);
+		this.AddSynsetsToSet(result, set);
+
+		result = GetCoordinates(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
 		return setToStrings(set, maxResults, true);
@@ -726,48 +759,48 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns an unordered String[] containing the synset, hyponyms, similars,
 	 * alsoSees, and coordinate terms (checking each in order) for all senses of
-	 * <code>Unigram</code> with <code>pos</code>, or null if not found
+	 * <code>Unigram</code> with <code>PartsOfSpeech</code>, or null if not found
 	 */
-	public String[] GetSynonyms(String Unigram, String Position)
+	public String[] GetSynonyms(String Unigram, String PartsOfSpeech)
 	{
-		return GetSynonyms(Unigram, Position, Integer.MAX_VALUE);
+		return GetSynonyms(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	/**
 	 * Returns an unordered String[] containing the synset, hyponyms, similars,
 	 * alsoSees, and coordinate terms (checking each in order) for all senses of
-	 * <code>Unigram</code> with <code>pos</code>, or null if not found
+	 * <code>Unigram</code> with <code>PartsOfSpeech</code>, or null if not found
 	 */
-	public String[] GetAllSynonyms(String Unigram, String Position, int maxResults)
+	public String[] GetAllSynonyms(String Unigram, String PartsOfSpeech, int maxResults)
 	{
 		final boolean dbug = false;
 
 		String[] result = null;
 		Set set = new HashSet();
 
-		result = GetAllSynsets(Unigram, Position);
+		result = GetAllSynsets(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("Synsets: " + WordNetUtil.asList(result));
 
-		result = GetAllHyponyms(Unigram, Position);
+		result = GetAllHyponyms(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("Hyponyms: " + WordNetUtil.asList(result));
 		if (dbug)
 			System.err.println("Set: " + WordNetUtil.asList(set));
 
-		result = GetAllSimilar(Unigram, Position);
+		result = GetAllSimilar(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("Similar: " + WordNetUtil.asList(result));
 
-		result = GetAllAlsoSees(Unigram, Position);
+		result = GetAllAlsoSees(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("AlsoSees: " + WordNetUtil.asList(result));
 
-		result = GetAllCoordinates(Unigram, Position);
+		result = GetAllCoordinates(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("Coordinates: " + WordNetUtil.asList(result));
@@ -775,9 +808,9 @@ public class WordNetCore implements IWordNetCore
 		return setToStrings(set, maxResults, true);
 	}
 
-	public String[] GetAllSynonyms(String Unigram, String Position)
+	public String[] GetAllSynonyms(String Unigram, String PartsOfSpeech)
 	{
-		return GetAllSynonyms(Unigram, Position, Integer.MAX_VALUE);
+		return GetAllSynonyms(Unigram, PartsOfSpeech, Integer.MAX_VALUE);
 	}
 
 	private void AddSynsetsToSet(String[] s, Set set)
@@ -833,11 +866,11 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns String[] of Common Parents for 1st senses of Unigrams with specified
-	 * pos' or null if not found
+	 * PartsOfSpeech' or null if not found
 	 */
-	public String[] GetCommonParents(String Unigram1, String word2, String pos)
+	public String[] GetCommonParents(String Unigram1, String word2, String PartsOfSpeech)
 	{
-		List result = GetCommonParentList(Unigram1, word2, pos);
+		List result = GetCommonParentList(Unigram1, word2, PartsOfSpeech);
 		return GetStringVectorFromList(result);
 	}
 
@@ -860,16 +893,16 @@ public class WordNetCore implements IWordNetCore
 		return ptn.getSynset();
 	}
 
-	private List GetCommonParentList(String Unigram1, String word2, String pos)
+	private List GetCommonParentList(String Unigram1, String Unigram2, String PartsOfSpeech)
 	{
 		Synset syn = null;
 		try
 		{
-			POS wnpos = convertPos(pos);
-			IndexWord XWord1 = FindIndexWord(wnpos, Word1);
+			POS wnPartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
+			IndexWord XWord1 = FindIndexWord(wnPartsOfSpeech, Unigram1);
 			if (XWord1 == null)
 				return null;
-			IndexWord XWord2 = FindIndexWord(wnpos, Word2);
+			IndexWord XWord2 = FindIndexWord(wnPartsOfSpeech, Unigram2);
 			if (XWord2 == null)
 				return null;
 			syn = GetCommonParent(XWord1, XWord2);
@@ -878,7 +911,7 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(this, e);
+			throw new WordNetException(this, e);
 		}
 		List l = new ArrayList();
 		AddLemmas(syn.getWords(), l);
@@ -910,25 +943,25 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns String[] of Unigrams in synset for first sense of <code>word</code>
-	 * with <code>pos</code>, or null if not found.
+	 * with <code>PartsOfSpeech</code>, or null if not found.
 	 */
-	public String[] GetSynset(String Unigram, String pos)
+	public String[] GetSynset(String Unigram, String PartsOfSpeech)
 	{
-		return GetSynset(Unigram, pos, false);
+		return GetSynset(Unigram, PartsOfSpeech, false);
 	}
 
 	/**
 	 * Returns String[] of Unigrams in synset for first sense of <code>word</code>
-	 * with <code>pos</code>, or null if not found.
+	 * with <code>PartsOfSpeech</code>, or null if not found.
 	 */
-	public String[] GetSynset(String Unigram, String pos, boolean includeOriginal)
+	public String[] GetSynset(String Unigram, String PartsOfSpeech, boolean InclusionOfSeedOK)
 	{
-		Synset syns = GetSynsetAtIndex(Unigram, pos, 1);
-		if (syns == null || syns.getWordsSize() < 1)
+		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
+		if (SynsetInstance == null || SynsetInstance.getWordsSize() < 1)
 			return null;
 		List l = new LinkedList();
-		AddLemmas(syns.getWords(), l);
-		if (!includeOriginal)
+		AddLemmas(SynsetInstance.getWords(), l);
+		if (!InclusionOfSeedOK)
 			l.remove(Unigram);
 
 		return GetStringVectorFromList(l);
@@ -945,25 +978,25 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns String[] of Unigrams in each synset for all senses of
-	 * <code>Unigram</code> with <code>pos</code>, or null if not found
+	 * <code>Unigram</code> with <code>PartsOfSpeech</code>, or null if not found
 	 */
-	public String[] GetAllSynsets(String Unigram, String Position)
+	public String[] GetAllSynsets(String Unigram, String PartsOfSpeech)
 	{
-		POS pos = convertPos(Position);
+		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
 		IndexWord XWord = null;
 		List result = null;
 		try
 		{
-			XWord = FindIndexWord(pos, Word);
+			XWord = FindIndexWord(PartsOfSpeech, Unigram);
 			if (XWord == null || XWord.getSenseCount() < 1)
 				return null;
 			result = new LinkedList();
 			for (int i = 1; i <= XWord.getSenseCount(); i++)
 			{
-				List syns = this.GetSynsetAtIndex(XWord, i);
-				if (syns == null || syns.size() < 1)
+				List SynsetInstances = this.GetSynsetAtIndex(XWord, i);
+				if (SynsetInstances == null || SynsetInstances.size() < 1)
 					continue;
-				for (Iterator j = syns.iterator(); j.hasNext();)
+				for (Iterator j = SynsetInstances.iterator(); j.hasNext();)
 				{
 					String lemma = (String) j.next();
 					AddLemma(lemma, result);
@@ -974,7 +1007,7 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
 	}
 
@@ -991,38 +1024,38 @@ public class WordNetCore implements IWordNetCore
 		return l;
 	}
 
-	private Synset[] allSynsets(CharSequence Unigram, CharSequence Position)
+	private Synset[] GetAllSynsets(CharSequence Unigram, CharSequence PartsOfSpeech)
 	{
-		POS pos = convertPos(Position);
-		IndexWord XWord = FindIndexWord(pos, Word);
+		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Word);
 		if (XWord == null)
 			return null;
 		int senseCount = XWord.getSenseCount();
 		if (senseCount < 1)
 			return null;
-		Synset[] syns = new Synset[senseCount];
-		for (int i = 0; i < syns.length; i++)
+		Synset[] SynsetInstances = new Synset[senseCount];
+		for (int i = 0; i < SynsetInstances.length; i++)
 		{
 			try
 			{
-				syns[i] = XWord.getSense(i + 1);
-				if (syns[i] == null)
-					System.err.println("[WARN] WordNet returned null Synset for: " + Word + "/" + pos);
+				SynsetInstances[i] = XWord.getSense(i + 1);
+				if (SynsetInstances[i] == null)
+					System.err.println("[WARN] WordNet returned null Synset for: " + Word + "/" + PartsOfSpeech);
 			}
 			catch (JWNLException e)
 			{
-				throw new WordNetError(e);
+				throw new WordNetException(e);
 			}
 		}
-		return syns;
+		return SynsetInstances;
 	}
 
-	private Synset GetSynsetAtIndex(CharSequence Word, CharSequence Position, int i)
+	private Synset GetSynsetAtIndex(CharSequence Unigram, CharSequence PartsOfSpeech, int i)
 	{
 		if (i < 1)
 			throw new IllegalArgumentException("Invalid index: " + i);
-		POS pos = convertPos(Position);
-		IndexWord XWord = FindIndexWord(pos, Word);
+		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Unigram);
 		if (XWord == null || XWord.getSenseCount() < i)
 			return null;
 		try
@@ -1031,27 +1064,27 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
 	}
 
 	/**
-	 * Return the # of senses (polysemy) for a given Word/pos. A 'sense' refers to
+	 * Return the # of senses (polysemy) for a given Word/PartsOfSpeech. A 'sense' refers to
 	 * a specific WordNet meaning and maps 1-1 to the concept of synsets. Each
 	 * 'sense' of a Word exists in a different synset.
 	 * 
 	 * @return # of senses or -1 if not found
 	 */
-	public int GetSenseCount(String Word, String pos)
+	public int GetSenseCount(String Unigram, String PartsOfSpeech)
 	{
 		int senses = -1;
 		try
 		{
-			IndexWord XWord = FindIndexWord(pos, Word);
+			IndexWord XWord = FindIndexWord(PartsOfSpeech, Unigram);
 			if (XWord != null)
 				senses = XWord.getSenseCount();
 		}
-		catch (WordNetError e)
+		catch (WordNetException e)
 		{
 			System.err.println("[WARN] " + e.getMessage());
 		}
@@ -1060,11 +1093,11 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns String[] of Antonyms for the 1st sense of <code>Word</code> with
-	 * <code>pos</code> or null if not found<br>
+	 * <code>PartsOfSpeech</code> or null if not found<br>
 	 */
-	public String[] GetAntonyms(String Word, String pos)
+	public String[] GetAntonyms(String Unigram, String PartsOfSpeech)
 	{
-		return GetPointerTargetsAtIndex(Word, pos, PointerType.ANTONYM, 1);
+		return GetPointerTargetsAtIndex(Unigram, PartsOfSpeech, PointerType.ANTONYM, 1);
 	}
 
 	/**
@@ -1078,20 +1111,20 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns String[] of Antonyms for the 1st sense of <code>Word</code> with
-	 * <code>pos</code> or null if not found<br>
+	 * <code>PartsOfSpeech</code> or null if not found<br>
 	 */
-	public String[] GetAllAntonyms(String Word, String pos)
+	public String[] GetAllAntonyms(String Unigram, String PartsOfSpeech)
 	{
-		return GetAllPointerTargets(Word, pos, PointerType.ANTONYM);
+		return GetAllPointerTargets(Unigram, PartsOfSpeech, PointerType.ANTONYM);
 	}
 
 	/**
 	 * Returns Hypernym String[] for all senses of <code>Word</code> with
-	 * <code>pos</code> or null if not found
+	 * <code>PartsOfSpeech</code> or null if not found
 	 */
-	public String[] GetHypernyms(String Word, String Position)
+	public String[] GetHypernyms(String Unigram, String PartsOfSpeech)
 	{
-		Synset SynsetInstance = GetSynsetAtIndex(Word, Position, 1);
+		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
 		PointerTargetNodeList ptnl = null;
 		try
 		{
@@ -1102,9 +1135,9 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
-		return ptnlToStrings(Word, ptnl);
+		return TransformNodeListToStrings(Word, ptnl);
 	}
 
 	/**
@@ -1123,9 +1156,9 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
-		return ptnlToStrings(null, ptnl);
+		return TransformNodeListToStrings(null, ptnl);
 	}
 
 
@@ -1142,6 +1175,7 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (NullPointerException e)
 		{
+			// bug from jwnl, ignore
 		}
 		getLemmaSet(ptnl, l);
 	}
@@ -1152,16 +1186,16 @@ public class WordNetCore implements IWordNetCore
 	 * delimited String) up to the root of WordNet for the 1st sense of the Word,
 	 * or null if not found
 	 */
-	public String[] GetAllHypernyms(String Word, String Position)
+	public String[] GetAllHypernyms(String Unigram, String PartsOfSpeech)
 	{
 		try
 		{
-			IndexWord XWord = FindIndexWord(convertPos(Position), Word);
+			IndexWord XWord = FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Unigram);
 			return GetStringVectorFromList(this.GetAllHypernyms(XWord));
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(this, e);
+			throw new WordNetException(this, e);
 		}
 	}
 
@@ -1183,7 +1217,6 @@ public class WordNetCore implements IWordNetCore
 	{
 		if (XWord == null)
 			return null;
-
 		Synset[] SynsetInstances = XWord.getSenses();
 		if (SynsetInstances == null || SynsetInstances.length <= 0)
 			return null;
@@ -1200,20 +1233,20 @@ public class WordNetCore implements IWordNetCore
 		if (SynsetInstance == null)
 			return null;
 
-		PointerTargetTree ptt = null;
+		PointerTargetTree HypernymTree = null;
 		try
 		{
-			ptt = PointerUtils.getInstance().getHypernymTree(SynsetInstance);
+			HypernymTree = PointerUtils.getInstance().getHypernymTree(SynsetInstance);
 
 		}
 		catch (NullPointerException e)
 		{
 		}
 
-		if (ptt == null)
+		if (HypernymTree == null)
 			return null;
 
-		List pointerTargetNodeLists = ptt.toList();
+		List pointerTargetNodeLists = HypernymTree.toList();
 		int count = 0; 
 		List l = new ArrayList();
 		for (Iterator i = pointerTargetNodeLists.iterator(); i.hasNext(); count++)
@@ -1236,11 +1269,11 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns Hyponym String[] for 1st sense of <code>Word</code> with
-	 * <code>pos</code> or null if not found
+	 * <code>PartsOfSpeech</code> or null if not found
 	 */
-	public String[] GetHyponyms(String Word, String Position)
+	public String[] GetHyponyms(String Word, String PartsOfSpeech)
 	{
-		Synset SynsetInstance = GetSynsetAtIndex(Word, Position, 1);
+		Synset SynsetInstance = GetSynsetAtIndex(Word, PartsOfSpeech, 1);
 		// System.out.println("syn="+(SynsetInstance.toString()));
 		PointerTargetNodeList ptnl = null;
 		try
@@ -1249,16 +1282,16 @@ public class WordNetCore implements IWordNetCore
 			ptnl = pu.getDirectHyponyms(SynsetInstance);
 
 			if (ptnl == null)
-				throw new RuntimeException("JWNL ERR: " + Word + "/" + Position);
+				throw new RuntimeException("JWNL ERR: " + Word + "/" + PartsOfSpeech);
 		}
 		catch (NullPointerException e)
 		{
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
-		return ptnlToStrings(Word, ptnl);
+		return TransformNodeListToStrings(Word, ptnl);
 	}
 
 	/**
@@ -1278,14 +1311,14 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
-		return ptnlToStrings(null, ptnl);
+		return TransformNodeListToStrings(null, ptnl);
 	}
 
 
 	/* Adds the hyponyms for this 'synset' to List */
-	private void GetHyponyms(Synset syn, Collection l) throws JWNLException
+	private void GetHyponyms(Synset syn, Collection HyponymList) throws JWNLException
 	{
 		PointerTargetNodeList ptnl = null;
 		try
@@ -1296,27 +1329,27 @@ public class WordNetCore implements IWordNetCore
 		catch (NullPointerException e)
 		{
 		}
-		GetLemmaSet(ptnl, l);
+		GetLemmaSet(ptnl, HyponymList);
 	}
+
+	// HYPONYMS (tree)
 
 	/**
 	 * Returns an unordered String[] of hyponym-synsets (each a colon-delimited
 	 * String), or null if not found
 	 * 
 	 */
-	public String[] GetAllHyponyms(String Word, String Position)
+	public String[] GetAllHyponyms(String Word, String PartsOfSpeech)
 	{
-		IndexWord XWord = FindIndexWord(convertPos(Position), Word);
-		List l = this.GetAllHyponyms(XWord);
-		if (l == null)
+		IndexWord XWord = FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Word);
+		List HyponymList = this.GetAllHyponyms(XWord);
+		if (HyponymList == null)
 			return null;
-		l.remove(Word);
-		return GetStringVectorFromList(l);
+		HyponymList.remove(Word);
+		return GetStringVectorFromList(HyponymList);
 	}
 
 	/*
-	 * private List GetAllHyponyms(IndexWord XWord) { int[] ids = GetSenseIds(XWord);
-	 * for (int i = 0; i < ids.length; i++) { GetHyponyms(ids[i]); } return null;
 	 */
 	private List GetAllHyponyms(IndexWord XWord)
 	{
@@ -1330,7 +1363,7 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(e);
+			throw new WordNetException(e);
 		}
 		if (SynsetInstances == null || SynsetInstances.length <= 0)
 			return null;
@@ -1379,18 +1412,18 @@ public class WordNetCore implements IWordNetCore
 		if (SynsetInstance == null)
 			return null;
 
-		PointerTargetTree ptt = null;
+		PointerTargetTree HyponymTree = null;
 		try
 		{
-			ptt = PointerUtils.getInstance().getHyponymTree(SynsetInstance);
+			HyponymTree = PointerUtils.getInstance().getHyponymTree(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
 		}
-		if (ptt == null)
+		if (HyponymTree == null)
 			return null;
 
-		List pointerTargetNodeLists = ptt.toList();
+		List pointerTargetNodeLists = HyponymTree.toList();
 
 		List l = new ArrayList();
 		for (Iterator i = pointerTargetNodeLists.iterator(); i.hasNext();)
@@ -1410,12 +1443,12 @@ public class WordNetCore implements IWordNetCore
 		}
 
 		// remove all the entries from the current SynsetInstance
-		Set syns = new HashSet();
-		AddLemmas(SynsetInstance.getWords(), syns);
+		Set SynsetInstances = new HashSet();
+		AddLemmas(SynsetInstance.getWords(), SynsetInstances);
 		OUTER: for (Iterator iter = l.iterator(); iter.hasNext();)
 		{
 			String syn = (SYNSET_DELIM + (String) iter.next() + SYNSET_DELIM);
-			for (Iterator j = syns.iterator(); j.hasNext();)
+			for (Iterator j = SynsetInstances.iterator(); j.hasNext();)
 			{
 				String lemma = (SYNSET_DELIM + j.next() + SYNSET_DELIM);
 				if (syn.indexOf(lemma) > -1)
@@ -1430,66 +1463,641 @@ public class WordNetCore implements IWordNetCore
 	}
 
 
-	public boolean isNoun(String Word)
+	public boolean isNoun(String Unigram)
 	{
-		return (GetPosStr(Word).indexOf(Character.toString('n')) > -1);
+		return (GetPartsOfSpeechStr(Unigram).indexOf(Character.toString('n')) > -1);
 	}
 
-	public boolean isAdjective(String Word)
+	public boolean isAdjective(String Unigram)
 	{
-		return (GetPosStr(Word).indexOf(Character.toString('a')) > -1);
+		return (GetPartsOfSpeechStr(Unigram).indexOf(Character.toString('a')) > -1);
 	}
 
-	public boolean isVerb(String Word)
+	public boolean isVerb(String Unigram)
 	{
-		return (GetPosStr(Word).indexOf(Character.toString('v')) > -1);
+		return (GetPartsOfSpeechStr(Unigram).indexOf(Character.toString('v')) > -1);
 	}
 
-	public boolean isAdverb(String Word)
+	public boolean isAdverb(String Unigram)
 	{
-		return (GetPosStr(Word).indexOf(Character.toString('r')) > -1);
+		return (GetPartsOfSpeechStr(Unigram).indexOf(Character.toString('r')) > -1);
 	}
 
 	/**
 	 * Returns an array of all stems, or null if not found
 	 * 
 	 * @param query
-	 * @param pos
+	 * @param PartsOfSpeech
 	 */
-	public String[] GetStems(String query, CharSequence pos)
+	public String[] GetStems(String query, CharSequence PartsOfSpeech)
 	{
-		List tmp = GetStemList(query, pos);
+		List tmp = GetStemList(query, PartsOfSpeech);
 		return GetStringVectorFromList(tmp);
 	}
 
 	/**
-	 * Returns true if 'Word' exists with 'pos' and is equal (via String.equals())
+	 * Returns true if 'Unigram' exists with 'PartsOfSpeech' and is equal (via String.equals())
 	 * to any of its stem forms, else false;
 	 * 
-	 * @param Word
-	 * @param pos
+	 * @param Unigram
+	 * @param PartsOfSpeech
 	 */
-	public boolean isStem(String Word, CharSequence pos)
+	public boolean isStem(String Unigram, CharSequence PartsOfSpeech)
 	{
-		String[] stems = GetStems(Word, pos);
+		String[] stems = GetStems(Unigram, PartsOfSpeech);
 		if (stems == null)
 			return false;
 		for (int i = 0; i < stems.length; i++)
-			if (Word.equals(stems[i]))
+			if (Unigram.equals(stems[i]))
 				return true;
 		return false;
 	}
 
-	private List GetStemList(String query, CharSequence pos)
+	private List GetStemList(String query, CharSequence PartsOfSpeech)
 	{
 		try
 		{
-			return m_Dictionary.getMorphologicalProcessor().lookupAllBaseForms(convertPos(pos), query);
+			return m_Dictionary.getMorphologicalProcessor().lookupAllBaseForms(TransformPartsOfSpeech(PartsOfSpeech), query);
 		}
 		catch (JWNLException e)
 		{
-			throw new WordNetError(this, e);
+			throw new WordNetException(this, e);
 		}
+	}
+
+	/**
+	 * Checks the existence of a 'Unigram' in the ontology
+	 * 
+	 * @param Unigram
+	 */
+	public boolean exists(String Unigram)
+	{
+		if (Unigram.indexOf(' ') > -1)
+			throw new WordNetException(this, "expecting Word, got phrase: " + word);
+
+		IndexWord[] XWord = null;
+		try
+		{
+			if (m_Dictionary == null)
+			{
+				System.err.println("NULL DICT");
+				System.exit(1);
+			}
+			IndexWordSet XWords = m_Dictionary.lookupAllIndexWords(Word);
+
+			if (XWords == null || XWords.size() < 1)
+				return false;
+
+			XWord = XWords.getIndexWordArray();
+		}
+		catch (JWNLException e)
+		{
+			System.err.println("[WARN] " + e.getMessage()); // throw?
+		}
+		return (XWord != null && XWord.length > 0);
+	}
+
+	/**
+	 * Check each Word in 'words' and Removes those that don't exist in the
+	 * ontology.
+	 * 
+	 * @param Unigrams
+	 */
+	public void RemoveNonExistent(Collection Unigrams)
+	{
+		for (Iterator i = Unigrams.iterator(); i.hasNext();)
+		{
+			String Word = (String) i.next();
+			if (!exists(Word))
+				i.remove();
+		}
+	}
+
+
+	private IndexWord FindIndexWord(String PartsOfSpeech, String Word)
+	{
+		return this.FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Word);
+	}
+
+	private POS TransformPartsOfSpeech(String PartsOfSpeech)
+	{
+		POS wnPartsOfSpeech = WordNetPos.getPos(PartsOfSpeech);
+		if (wnPartsOfSpeech == null)
+			throw new WordNetException(this, "Invalid Pos-String: '" + PartsOfSpeech + "'");
+		return wnPartsOfSpeech;
+	}
+
+	private IndexWord FindIndexWord(POS PartsOfSpeech, CharSequence cs)
+	{
+		if (cs == null)
+			return null;
+		String Word = cs.toString().replace('-', '_');
+		IndexWord XWord = null;
+		try
+		{
+			XWord = m_Dictionary.lookupIndexWord(PartsOfSpeech, Word);
+		}
+		catch (JWNLException e)
+		{
+		}
+		return XWord;
+	}
+
+	private String TransformLemmaToString(Word[] Unigrams, String delim, boolean TerminalDelimiterOK)
+	{
+		if (Unigrams == null || words.length == 0)
+			return null;
+		List LemmaSet = new ArrayList();
+		AddLemmas(Unigrams, LemmaSet);
+		String result = WordNetUtil.join(LemmaSet, delim);
+		if (TerminalDelimiterOK)
+			result = delim + result + delim;
+		return result;
+	}
+
+	private void AddLemmas(Word[] Unigrams, Collection LemmaSet)
+	{
+		if (Unigrams == null || words.length == 0)
+			return;
+		for (int k = 0; k < Unigrams.length; k++)
+			AddLemma(Unigrams[k], LemmaSet);
+	}
+
+	private void AddLemma(Word Unigram, Collection LemmaSet)
+	{
+		this.AddLemma(Unigram.getLemma(), LemmaSet);
+	}
+
+	private void AddLemma(String lemma, Collection LemmaSet)
+	{
+		if (m_DiscardCompoundWord && isCompound(lemma))
+			return;
+		if (m_DiscardUpperCase && WordNetUtil.startsWithUppercase(lemma))
+			return;
+		lemma = NormalizeLemma(lemma);
+		if (!LemmaSet.contains(lemma)) 
+			LemmaSet.add(lemma);
+	}
+
+	private void GetLemmaSet(PointerTargetNodeList source, Collection LemmaSet)
+	{
+		if (source == null)
+			return;
+
+		for (Iterator i = source.iterator(); i.hasNext();)
+		{
+			PointerTargetNode targetNode = (PointerTargetNode) i.next();
+			if (!targetNode.isLexical())
+			{
+				Synset syn = targetNode.getSynset();
+				if (syn != null)
+					AddLemmas(syn.getWords(), LemmaSet);
+			}
+			else
+			{
+				AddLemma(targetNode.getWord(), LemmaSet);
+			}
+		}
+	}
+
+	private List GetLemmaStrings(PointerTargetNodeList source, String delim, boolean TerminalDelimiterOK)
+	{
+		List l = new ArrayList();
+		for (Iterator i = source.iterator(); i.hasNext();)
+		{
+			PointerTargetNode targetNode = (PointerTargetNode) i.next();
+			if (!targetNode.isLexical())
+			{
+				Synset syn = targetNode.getSynset();
+				if (syn != null)
+				{
+					String s = TransformLemmaToString(syn.getWords(), delim, TerminalDelimiterOK);
+					l.add(s);
+				}
+			}
+			else
+			{ 
+				List LemmaSet = new ArrayList();
+				AddLemma(targetNode.getWord(), LemmaSet);
+				System.err.println("ILLEGAL CALL TO TARGET: " + targetNode.getWord());
+			}
+		}
+		return l == null || l.size() < 1 ? null : l;
+	}
+
+	private static String trimFirstandLastChars(String s)
+	{
+		if (s.length() < 2)
+			throw new IllegalArgumentException("Invalid length String: '" + s + "'");
+		return s.substring(1, s.length() - 1);
+	}
+
+	private String NormalizeLemma(String lemma)
+	{
+		if (lemma.endsWith(")"))
+			lemma = lemma.substring(0, lemma.length() - 3);
+		lemma = WordNetUtil.replace(lemma, '_', '-');
+		return lemma;
+	}
+
+
+	/**
+	 * Returns an array of all parts-of-speech ordered according to their polysemy
+	 * count, returning the PartsOfSpeech with the most different senses in the first
+	 * position, etc.
+	 * 
+	 * @return String[], one element for each part of speech ("a" = adjective, "n"
+	 *         = noun, "r" = adverb, "v" = verb), or null if not found.
+	 */
+	public String[] GetPartsOfSpeech(String Unigram)
+	{
+		IndexWord[] XWords = GetIndexWords(Unigram);
+		if (all == null)
+			return null;
+		String[] PartsOfSpeech = new String[XWords.length];
+		for (int i = 0; i < XWords.length; i++)
+			PartsOfSpeech[i] = XWords[i].getPOS().getKey();
+		return PartsOfSpeech;
+	}
+
+	/**
+	 * @return String from ("a" = adjective, "n" = noun, "r" = adverb, "v" =
+	 *         verb), or null if not found.
+	 */
+	public String GetPartsOfSpeech(int id)
+	{
+		Synset SynsetInstances = GetSynsetAtId(id);
+		if (SynsetInstances == null)
+			return null;
+		return SynsetInstances.getPOS().getKey();
+	}
+
+	/**
+	 * Returns a String of characters, 1 for each part of speech: ("a" =
+	 * adjective, "n" = noun, "r" = adverb, "v" = verb) or an empty String if not
+	 * found.
+	 * <p>
+	 */
+	private String GetPartsOfSpeechStr(String Unigram)
+	{
+		String PartsOfSpeech = QQ;
+		IndexWord[] all = GetIndexWords(Unigram);
+		if (all == null)
+			return PartsOfSpeech;
+		for (int i = 0; i < all.length; i++)
+			PartsOfSpeech += all[i].getPOS().getKey();
+		return PartsOfSpeech;
+	}
+
+	/**
+	 * Finds the most-common part-of-speech for the Word, according to its
+	 * polysemy count, returning the PartsOfSpeech for the version of the Word with the most
+	 * different senses.
+	 * 
+	 */
+	public String GetBestPartsOfSpeech(String Unigram)
+	{
+		IndexWord[] all = GetIndexWords(Unigram);
+		if (all == null || all.length < 1)
+			return null;
+		POS p = all[0].getPOS();
+		if (p == POS.NOUN)
+			return NOUN;
+		if (p == POS.VERB)
+			return VERB;
+		if (p == POS.ADVERB)
+			return ADV;
+		if (p == POS.ADJECTIVE)
+			return ADJ;
+		throw new WordNetException("no PartsOfSpeech for Unigram: " + word);
+	}
+
+	private IndexWord[] GetIndexWords(CharSequence Unigram)
+	{
+		List list = new ArrayList();
+		for (Iterator itr = POS.getAllPOS().iterator(); itr.hasNext();)
+		{
+			IndexWord XWord = FindIndexWord((POS) itr.next(), Unigram.toString());
+			if (XWord != null)
+			{
+				int polysemy = XWord.getSenseCount();
+				list.add(new ComparableIndexWord(XWord, polysemy));
+			}
+		}
+		int idx = 0;
+		Collections.sort(list);
+		IndexWord[] XWords = new IndexWord[list.size()];
+		for (Iterator i = list.iterator(); i.hasNext();)
+		{
+			ComparableIndexWord cXWord = (ComparableIndexWord) i.next();
+			XWords[idx++] = cXWord.XWord;
+		}
+		return XWords;
+	}
+
+	class ComparableIndexWord implements Comparable
+	{
+		IndexWord XWord;
+		int polysemy = -1;
+
+		public ComparableIndexWord(IndexWord XWord, int polysemy)
+		{
+			this.XWord = XWord;
+			this.polysemy = polysemy;
+		}
+
+		public String toString()
+		{
+			return XWord.toString() + "polysemy=" + polysemy;
+		}
+
+		public int compareTo(Object arg0)
+		{
+			ComparableIndexWord cXWord = (ComparableIndexWord) arg0;
+			if (cXWord.polysemy == polysemy)
+				return 0;
+			return (cXWord.polysemy > polysemy) ? 1 : -1;
+		}
+	}
+
+	/**
+	 * @param ConfigFile
+	 *          WordNet xml-based configuration file full path.
+	 * @throws FileNotFoundException
+	 */
+	private void InitWordNet(String ConfigFile) throws JWNLException
+	{
+		if (DBUG)
+			System.err.println("[INFO] Initializing WordNet: conf='" + ConfigFile + "'");
+		InputStream is = WordNetUtil.GetResourceStream(getClass(), ConfigFile);
+		if (DBUG)
+			System.err.println("[INFO] Initializing WordNet: stream='" + is + "'");
+		try
+		{
+			JWNL.initialize(is);
+		}
+		catch (RuntimeException e)
+		{
+			System.err.println(e.getMessage());
+			throw e;
+		}
+	}
+
+	/**
+	 * @param query
+	 * @param l
+	 */
+	public static String[] GetStringVectorFromList(List l)
+	{
+		if (l == null || l.size() == 0)
+			return null;
+		return (String[]) l.toArray(new String[l.size()]);
+	}
+
+	/**
+	 * @param l
+	 */
+	public String[] TransformNodeListToStrings(String query, PointerTargetNodeList ptnl)
+	{
+		if (ptnl == null || ptnl.size() == 0)
+			return null;
+		List l = new LinkedList();
+		GetLemmaSet(ptnl, l);
+	
+		if (query != null)
+			l.remove(query); 
+		return GetStringVectorFromList(l);
+	}
+
+	/**
+	 * Returns a random example from a random word w' <code>PartsOfSpeech</code>
+	 * 
+	 * @return random example
+	 */
+	public String GetRandomExample(CharSequence PartsOfSpeech)
+	{
+		return GetRandomExamples(PartsOfSpeech, 1)[0];
+	}
+
+	/**
+	 * Returns <code>numExamples</code> random examples from random words w'
+	 * <code>PartsOfSpeech</code>
+	 * 
+	 * @return random examples
+	 */
+	public String[] GetRandomExamples(CharSequence PartsOfSpeech, int numExamples)
+	{
+		int idx = 0;
+		String[] result = new String[numExamples];
+		WHILE: while (true)
+		{
+			try
+			{
+				IndexWord XWord = null;
+				while (XWord == null || !m_DiscardCompoundWord && WordNetUtil.contains(XWord.getLemma(), " "))
+					XWord = m_Dictionary.getRandomIndexWord(TransformPartsOfSpeech(PartsOfSpeech));
+
+				Synset syn = XWord.getSenses()[0];
+				List l = GetExamples(syn);
+				if (l == null || l.size() < 1)
+					continue;
+				for (Iterator i = l.iterator(); i.hasNext();)
+				{
+					String example = (String) i.next();
+					if (example != null)
+					{
+						result[idx++] = example;
+						break;
+					}
+				}
+				if (idx == result.length)
+					break WHILE;
+			}
+			catch (JWNLException e)
+			{
+				System.err.println("WARN] Unexpected Exception: " + e.getMessage());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns <code>count</code> random words w' <code>PartsOfSpeech</code>
+	 * 
+	 * @return String[] of random words
+	 */
+	public String[] GetRandomWords(CharSequence PartsOfSpeech, int count)
+	{
+		String[] result = new String[count];
+		for (int i = 0; i < result.length; i++)
+			result[i] = GetRandomWord(PartsOfSpeech, true, m_WordSizeMax);
+		return result;
+	}
+
+	/**
+	 * Returns a random stem with <code>PartsOfSpeech</code> and a max length of
+	 * <code>this.m_WordSizeMax</code>.
+	 * 
+	 * @return random word
+	 */
+	public String GetRandomWord(CharSequence PartsOfSpeech)
+	{
+		return this.GetRandomWord(PartsOfSpeech, true, m_WordSizeMax);
+	}
+
+	/**
+	 * Returns a random word with <code>PartsOfSpeech</code> and a maximum of
+	 * <code>maxChars</code>.
+	 * 
+	 * @return a random word or null if none is found
+	 */
+	public String GetRandomWord(CharSequence PartsOfSpeech, boolean stemsOnly, int maxChars)
+	{
+		IndexWord XWord = null;
+		POS wnPartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
+		while (true)
+		{
+			try
+			{
+				FileBackedDictionary d;
+				XWord = m_Dictionary.getRandomIndexWord(wnPartsOfSpeech);
+			}
+			catch (JWNLRuntimeException e)
+			{
+				continue;
+			}
+			catch (JWNLException e)
+			{
+				throw new WordNetException(e);
+			}
+			String word = XWord.getLemma();
+			if (m_DiscardCompoundWord && isCompound(Word))
+				continue;
+			if (Word.length() > maxChars)
+				continue;
+			if (!stemsOnly || isStem(Word, PartsOfSpeech))
+				return XWord.getLemma();
+		}
+	}
+
+	/**
+	 * Returns true if the Word is considered compound (contains either a space,
+	 * dash,or underscore), else false
+	 */
+	static boolean isCompound(String Unigram)
+	{
+		return Unigram.indexOf(' ') > 0 || Unigram.indexOf('-') > 0 || Unigram.indexOf('_') > 0;
+	}
+
+	/** @invisible */
+	public Dictionary GetDictionary()
+	{
+		return m_Dictionary;
+	}
+
+	/**
+	 * Prints the full hyponym tree to System.out (primarily for debugging).
+	 * 
+	 * @param SenseId
+	 * @invisible
+	 */
+	public void DisplayHyponymTree(int SenseId)
+	{
+		try
+		{
+			SerializeHyponymTree(System.out, GetSynsetAtId(SenseId));
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(e);
+		}
+	}
+
+	void SerializeHyponymTree(String Unigram, String PartsOfSpeech) throws JWNLException
+	{
+		SerializeHyponymTree(System.err, Unigram, PartsOfSpeech);
+	}
+
+	void SerializeHyponymTree(PrintStream ps, String Unigram, String PartsOfSpeech) throws JWNLException
+	{
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Unigram);
+		Synset syn = XWord.getSense(1);
+		this.SerializeHyponymTree(ps, syn);
+	}
+
+	void SerializeHyponymTree(PrintStream ps, Synset SynsetInstance) throws JWNLException
+	{
+		PointerTargetTree hyponyms = null;
+		try
+		{
+			hyponyms = PointerUtils.getInstance().getHyponymTree(syn);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		if (hyponyms == null)
+			return;
+		Set SynsetInstances = new HashSet();
+		AddLemmas(SynsetInstance.getWords(), SynsetInstances);
+		ps.println("\nHyponyms of synset" + SynsetInstances + ":\n-------------------------------------------");
+
+		hyponyms.print(ps);
+		ps.println();
+	}
+
+	/**
+	 * Prints the full hypernym tree to System.out (primarily for debugging).
+	 * 
+	 * @param SenseId
+	 */
+	public void DisplayHypernymTree(int SenseId)
+	{
+		try
+		{
+			Synset s = GetSynsetAtId(SenseId);
+			// System.out.println("Syn: "+s);
+			SerializeHypernymTree(System.out, s);
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(e);
+		}
+	}
+
+	void SerializeHypernymTree(String Word, String PartsOfSpeech) throws JWNLException
+	{
+		SerializeHypernymTree(System.err, Word, PartsOfSpeech);
+	}
+
+	void SerializeHypernymTree(PrintStream ps, String Word, String PartsOfSpeech) throws JWNLException
+	{
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Word);
+		Synset syn = XWord.getSense(1);
+		SerializeHypernymTree(ps, syn);
+	}
+
+	void SerializeHypernymTree(PrintStream ps, Synset syn) throws JWNLException
+	{
+		PointerTargetTree hypernyms = null;
+		try
+		{
+			hypernyms = PointerUtils.getInstance().getHypernymTree(syn);
+		}
+		catch (StackOverflowError e)
+		{
+			PointerUtils.getInstance().setOverflowError(true);
+			hypernyms = PointerUtils.getInstance().getHypernymTree(syn);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		if (hypernyms == null)
+			return;
+		Set SynsetInstances = new HashSet();
+		AddLemmas(syn.getWords(), SynsetInstances);
+		ps.println("\nHypernyms of synset" + SynsetInstances + ":\n-------------------------------------------");
+		hypernyms.print(ps);
+		ps.println();
 	}
 
 }
