@@ -652,7 +652,7 @@ public class WordNetCore implements IWordNetCore
 	public String[] GetAllExamples(CharSequence Unigram, CharSequence PartsOfSpeech)
 	{
 		Synset[] SynsetInstances = GetAllSynsets(Unigram, PartsOfSpeech);
-		if (SynsetInstances == null || syns.length < 1)
+		if (SynsetInstances == null || SynsetInstances.length < 1)
 			return null;
 		List l = new LinkedList();
 		for (int i = 0; i < SynsetInstances.length; i++)
@@ -868,9 +868,9 @@ public class WordNetCore implements IWordNetCore
 	 * Returns String[] of Common Parents for 1st senses of Unigrams with specified
 	 * PartsOfSpeech' or null if not found
 	 */
-	public String[] GetCommonParents(String Unigram1, String word2, String PartsOfSpeech)
+	public String[] GetCommonAncestors(String Unigram1, String word2, String PartsOfSpeech)
 	{
-		List result = GetCommonParentList(Unigram1, word2, PartsOfSpeech);
+		List result = GetCommonAncestorList(Unigram1, word2, PartsOfSpeech);
 		return GetStringVectorFromList(result);
 	}
 
@@ -878,24 +878,24 @@ public class WordNetCore implements IWordNetCore
 	 * Returns common parent for Unigrams with unique ids <code>id1</code>,
 	 * <code>id2</code>, or null if either Unigram or no parent is found
 	 */
-	public Synset GetCommonParent(int id1, int id2) throws JWNLException
+	public Synset GetCommonAncestor(int id1, int id2) throws JWNLException
 	{
-		Synset syn1 = GetSynsetAtId(id1);
-		if (syn1 == null)
+		Synset SynsetInstance1 = GetSynsetAtId(id1);
+		if (SynsetInstance1 == null)
 			return null;
-		Synset syn2 = GetSynsetAtId(id2);
-		if (syn2 == null)
+		Synset SynsetInstance2 = GetSynsetAtId(id2);
+		if (SynsetInstance2 == null)
 			return null;
-		RelationshipList list = RelationshipFinder.getInstance().findRelationships(syn1, syn2, PointerType.HYPERNYM);
+		RelationshipList list = RelationshipFinder.getInstance().findRelationships(SynsetInstance1, SynsetInstance2, PointerType.HYPERNYM);
 		AsymmetricRelationship ar = (AsymmetricRelationship) list.get(0);
 		PointerTargetNodeList nl = ar.getNodeList();
 		PointerTargetNode ptn = (PointerTargetNode) nl.get(ar.getCommonParentIndex());
 		return ptn.getSynset();
 	}
 
-	private List GetCommonParentList(String Unigram1, String Unigram2, String PartsOfSpeech)
+	private List GetCommonAncestorList(String Unigram1, String Unigram2, String PartsOfSpeech)
 	{
-		Synset syn = null;
+		Synset SynsetInstance = null;
 		try
 		{
 			POS wnPartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
@@ -905,8 +905,8 @@ public class WordNetCore implements IWordNetCore
 			IndexWord XWord2 = FindIndexWord(wnPartsOfSpeech, Unigram2);
 			if (XWord2 == null)
 				return null;
-			syn = GetCommonParent(XWord1, XWord2);
-			if (syn == null)
+			SynsetInstance = GetCommonAncestor(XWord1, XWord2);
+			if (SynsetInstance == null)
 				return null;
 		}
 		catch (JWNLException e)
@@ -914,11 +914,11 @@ public class WordNetCore implements IWordNetCore
 			throw new WordNetException(this, e);
 		}
 		List l = new ArrayList();
-		AddLemmas(syn.getWords(), l);
+		AddLemmas(SynsetInstance.getWords(), l);
 		return l == null || l.size() < 1 ? null : l;
 	}
 
-	private Synset GetCommonParent(IndexWord XWord1, IndexWord XWord2) throws JWNLException
+	private Synset GetCommonAncestor(IndexWord XWord1, IndexWord XWord2) throws JWNLException
 	{
 		if (XWord1 == null || XWord2 == null)
 			return null;
@@ -968,8 +968,7 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Returns String[] of Synsets for unique id <code>id</code> or null if not
-	 * found.
+	 * Returns String[] of Synsets for unique id <code>id</code> or null if not found.
 	 */
 	public String[] GetSynset(int id)
 	{
@@ -984,7 +983,7 @@ public class WordNetCore implements IWordNetCore
 	{
 		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeech);
 		IndexWord XWord = null;
-		List result = null;
+		List SynsetList = null;
 		try
 		{
 			XWord = FindIndexWord(PartsOfSpeech, Unigram);
@@ -999,11 +998,11 @@ public class WordNetCore implements IWordNetCore
 				for (Iterator j = SynsetInstances.iterator(); j.hasNext();)
 				{
 					String lemma = (String) j.next();
-					AddLemma(lemma, result);
+					AddLemma(lemma, SynsetList);
 				}
 			}
-			result.remove(Unigram); // not including original
-			return GetStringVectorFromList(result);
+			SynsetList.remove(Unigram);
+			return GetStringVectorFromList(SynsetList);
 		}
 		catch (JWNLException e)
 		{
@@ -1019,9 +1018,9 @@ public class WordNetCore implements IWordNetCore
 		if (XWord == null || XWord.getSenseCount() < 1)
 			return null;
 
-		List l = new ArrayList();
-		AddLemmas(XWord.getSense(index).getWords(), l);
-		return l;
+		List SynsetList = new ArrayList();
+		AddLemmas(XWord.getSense(index).getWords(), SynsetList);
+		return SynsetList;
 	}
 
 	private Synset[] GetAllSynsets(CharSequence Unigram, CharSequence PartsOfSpeech)
@@ -1069,9 +1068,7 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Return the # of senses (polysemy) for a given Word/PartsOfSpeech. A 'sense' refers to
-	 * a specific WordNet meaning and maps 1-1 to the concept of synsets. Each
-	 * 'sense' of a Word exists in a different synset.
+	 * Return the # of senses (polysemy) for a given Word/PartsOfSpeech. 
 	 * 
 	 * @return # of senses or -1 if not found
 	 */
@@ -1125,10 +1122,10 @@ public class WordNetCore implements IWordNetCore
 	public String[] GetHypernyms(String Unigram, String PartsOfSpeech)
 	{
 		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
-		PointerTargetNodeList ptnl = null;
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			ptnl = PointerUtils.getInstance().getDirectHypernyms(SynsetInstance);
+			NodeList = PointerUtils.getInstance().getDirectHypernyms(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
@@ -1137,7 +1134,7 @@ public class WordNetCore implements IWordNetCore
 		{
 			throw new WordNetException(e);
 		}
-		return TransformNodeListToStrings(Word, ptnl);
+		return TransformNodeListToStrings(Unigram, NodeList);
 	}
 
 	/**
@@ -1146,10 +1143,10 @@ public class WordNetCore implements IWordNetCore
 	public String[] GetHypernyms(int id)
 	{
 		Synset SynsetInstance = GetSynsetAtId(id);
-		PointerTargetNodeList ptnl = null;
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			ptnl = PointerUtils.getInstance().getDirectHypernyms(SynsetInstance);
+			NodeList = PointerUtils.getInstance().getDirectHypernyms(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
@@ -1158,26 +1155,25 @@ public class WordNetCore implements IWordNetCore
 		{
 			throw new WordNetException(e);
 		}
-		return TransformNodeListToStrings(null, ptnl);
+		return TransformNodeListToStrings(null, NodeList);
 	}
 
 
 	/*
 	 * Adds the hypernyms for this 'synset' to List 
 	 */
-	private void GetHypernyms(Synset syn, Collection l) throws JWNLException
+	private void GetHypernyms(Synset SynsetInstance, Collection l) throws JWNLException
 	{
 
-		PointerTargetNodeList ptnl = null;
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			ptnl = PointerUtils.getInstance().getDirectHypernyms(syn);
+			NodeList = PointerUtils.getInstance().getDirectHypernyms(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
-			// bug from jwnl, ignore
 		}
-		getLemmaSet(ptnl, l);
+		getLemmaSet(NodeList, l);
 	}
 
 
@@ -1209,8 +1205,8 @@ public class WordNetCore implements IWordNetCore
 		Synset SynsetInstance = GetSynsetAtId(id);
 		if (SynsetInstance == null)
 			return new String[]{ROOT};
-		List l = GetHypernymTree(SynsetInstance);
-		return GetStringVectorFromList(l);
+		List HypernymList = GetHypernymTree(SynsetInstance);
+		return GetStringVectorFromList(HypernymList);
 	}
 
 	private List GetAllHypernyms(IndexWord XWord) throws JWNLException
@@ -1251,8 +1247,8 @@ public class WordNetCore implements IWordNetCore
 		List l = new ArrayList();
 		for (Iterator i = pointerTargetNodeLists.iterator(); i.hasNext(); count++)
 		{
-			PointerTargetNodeList ptnl = (PointerTargetNodeList) i.next();
-			List strs = this.GetLemmaStrings(ptnl, SYNSET_DELIM, false);
+			PointerTargetNodeList NodeList = (PointerTargetNodeList) i.next();
+			List strs = this.GetLemmaStrings(NodeList, SYNSET_DELIM, false);
 			for (Iterator it = strs.iterator(); it.hasNext();)
 			{
 				String lemma = (String) it.next();
@@ -1271,18 +1267,18 @@ public class WordNetCore implements IWordNetCore
 	 * Returns Hyponym String[] for 1st sense of <code>Word</code> with
 	 * <code>PartsOfSpeech</code> or null if not found
 	 */
-	public String[] GetHyponyms(String Word, String PartsOfSpeech)
+	public String[] GetHyponyms(String Unigram, String PartsOfSpeech)
 	{
-		Synset SynsetInstance = GetSynsetAtIndex(Word, PartsOfSpeech, 1);
-		// System.out.println("syn="+(SynsetInstance.toString()));
-		PointerTargetNodeList ptnl = null;
+		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
+		// System.out.println("SynsetInstance="+(SynsetInstance.toString()));
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			PointerUtils pu = PointerUtils.getInstance();
-			ptnl = pu.getDirectHyponyms(SynsetInstance);
+			PointerUtils UtilInstance = PointerUtils.getInstance();
+			NodeList = UtilInstance.getDirectHyponyms(SynsetInstance);
 
-			if (ptnl == null)
-				throw new RuntimeException("JWNL ERR: " + Word + "/" + PartsOfSpeech);
+			if (NodeList == null)
+				throw new RuntimeException("JWNL Exception: " + Unigram + "/" + PartsOfSpeech);
 		}
 		catch (NullPointerException e)
 		{
@@ -1291,7 +1287,7 @@ public class WordNetCore implements IWordNetCore
 		{
 			throw new WordNetException(e);
 		}
-		return TransformNodeListToStrings(Word, ptnl);
+		return TransformNodeListToStrings(Unigram, NodeList);
 	}
 
 	/**
@@ -1300,57 +1296,50 @@ public class WordNetCore implements IWordNetCore
 	public String[] GetHyponyms(int id)
 	{
 		Synset SynsetInstance = GetSynsetAtId(id);
-		PointerTargetNodeList ptnl = null;
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			ptnl = PointerUtils.getInstance().getDirectHyponyms(SynsetInstance);
+			NodeList = PointerUtils.getInstance().getDirectHyponyms(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
-			// ignore jwnl bug
 		}
 		catch (JWNLException e)
 		{
 			throw new WordNetException(e);
 		}
-		return TransformNodeListToStrings(null, ptnl);
+		return TransformNodeListToStrings(null, NodeList);
 	}
 
 
 	/* Adds the hyponyms for this 'synset' to List */
-	private void GetHyponyms(Synset syn, Collection HyponymList) throws JWNLException
+	private void GetHyponyms(Synset SynsetInstance, Collection HyponymList) throws JWNLException
 	{
-		PointerTargetNodeList ptnl = null;
+		PointerTargetNodeList NodeList = null;
 		try
 		{
-			PointerUtils pu = PointerUtils.getInstance();
-			ptnl = pu.getDirectHyponyms(syn);
+			PointerUtils UtilInstance = PointerUtils.getInstance();
+			NodeList = UtilInstance.getDirectHyponyms(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
 		}
-		GetLemmaSet(ptnl, HyponymList);
+		GetLemmaSet(NodeList, HyponymList);
 	}
 
-	// HYPONYMS (tree)
-
 	/**
-	 * Returns an unordered String[] of hyponym-synsets (each a colon-delimited
-	 * String), or null if not found
-	 * 
+	 * Returns an unordered String[] of hyponym-synsets (each a colon-delimited String), or null if not found
 	 */
-	public String[] GetAllHyponyms(String Word, String PartsOfSpeech)
+	public String[] GetAllHyponyms(String Unigram, String PartsOfSpeech)
 	{
-		IndexWord XWord = FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Word);
+		IndexWord XWord = FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Unigram);
 		List HyponymList = this.GetAllHyponyms(XWord);
 		if (HyponymList == null)
 			return null;
-		HyponymList.remove(Word);
+		HyponymList.remove(Unigram);
 		return GetStringVectorFromList(HyponymList);
 	}
 
-	/*
-	 */
 	private List GetAllHyponyms(IndexWord XWord)
 	{
 		if (XWord == null)
@@ -1395,16 +1384,16 @@ public class WordNetCore implements IWordNetCore
 		if (SynsetInstance == null)
 			return null;
 
-		List l = null;
+		List HyponymList = null;
 		try
 		{
-			l = GetHyponymTree(SynsetInstance);
+			HyponymList = GetHyponymTree(SynsetInstance);
 		}
 		catch (JWNLException e)
 		{
 			e.printStackTrace();
 		}
-		return GetStringVectorFromList(l);
+		return GetStringVectorFromList(HyponymList);
 	}
 
 	private List GetHyponymTree(Synset SynsetInstance) throws JWNLException
@@ -1420,38 +1409,39 @@ public class WordNetCore implements IWordNetCore
 		catch (NullPointerException e)
 		{
 		}
+
 		if (HyponymTree == null)
 			return null;
 
 		List pointerTargetNodeLists = HyponymTree.toList();
 
-		List l = new ArrayList();
+		List LemmaList = new ArrayList();
 		for (Iterator i = pointerTargetNodeLists.iterator(); i.hasNext();)
 		{
-			PointerTargetNodeList ptnl = (PointerTargetNodeList) i.next();
-			List tmp = this.GetLemmaStrings(ptnl, SYNSET_DELIM, true);
+			PointerTargetNodeList NodeList = (PointerTargetNodeList) i.next();
+			List TmpLemmaList = this.GetLemmaStrings(NodeList, SYNSET_DELIM, true);
 
-			for (Iterator it = tmp.iterator(); it.hasNext();)
+			for (Iterator it = TmpLemmaList.iterator(); it.hasNext();)
 			{
-				String syn = (String) it.next();
-				syn = trimFirstandLastChars(syn);
-				if (syn.length() < 2)
+				String LemmaStr = (String) it.next();
+				LemmaStr = PruneterminalCharacters(LemmaStr);
+				if (LemmaStr.length() < 2)
 					continue;
-				if (!l.contains(syn))
-					l.add(syn);
+				if (!LemmaList.contains(LemmaStr))
+					LemmaList.add(LemmaStr);
 			}
 		}
 
 		// remove all the entries from the current SynsetInstance
 		Set SynsetInstances = new HashSet();
 		AddLemmas(SynsetInstance.getWords(), SynsetInstances);
-		OUTER: for (Iterator iter = l.iterator(); iter.hasNext();)
+		OUTER: for (Iterator iter = LemmaList.iterator(); iter.hasNext();)
 		{
-			String syn = (SYNSET_DELIM + (String) iter.next() + SYNSET_DELIM);
+			String SynsetInstance = (SYNSET_DELIM + (String) iter.next() + SYNSET_DELIM);
 			for (Iterator j = SynsetInstances.iterator(); j.hasNext();)
 			{
 				String lemma = (SYNSET_DELIM + j.next() + SYNSET_DELIM);
-				if (syn.indexOf(lemma) > -1)
+				if (SynsetInstance.indexOf(lemma) > -1)
 				{
 					iter.remove();
 					continue OUTER;
@@ -1459,7 +1449,7 @@ public class WordNetCore implements IWordNetCore
 			}
 		}
 
-		return l;
+		return LemmaList;
 	}
 
 
@@ -1486,20 +1476,20 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns an array of all stems, or null if not found
 	 * 
-	 * @param query
+	 * @param Expression
 	 * @param PartsOfSpeech
 	 */
-	public String[] GetStems(String query, CharSequence PartsOfSpeech)
+	public String[] GetStems(String Expression, CharSequence PartsOfSpeech)
 	{
-		List tmp = GetStemList(query, PartsOfSpeech);
+		List tmp = GetStemList(Expression, PartsOfSpeech);
 		return GetStringVectorFromList(tmp);
 	}
 
 	/**
-	 * Returns true if 'Unigram' exists with 'PartsOfSpeech' and is equal (via String.equals())
+	 * Returns true if 'Word' exists with 'PartsOfSpeech' and is equal (via String.equals())
 	 * to any of its stem forms, else false;
 	 * 
-	 * @param Unigram
+	 * @param Word
 	 * @param PartsOfSpeech
 	 */
 	public boolean isStem(String Unigram, CharSequence PartsOfSpeech)
@@ -1513,11 +1503,11 @@ public class WordNetCore implements IWordNetCore
 		return false;
 	}
 
-	private List GetStemList(String query, CharSequence PartsOfSpeech)
+	private List GetStemList(String Expression, CharSequence PartsOfSpeech)
 	{
 		try
 		{
-			return m_Dictionary.getMorphologicalProcessor().lookupAllBaseForms(TransformPartsOfSpeech(PartsOfSpeech), query);
+			return m_Dictionary.getMorphologicalProcessor().lookupAllBaseForms(TransformPartsOfSpeech(PartsOfSpeech), Expression);
 		}
 		catch (JWNLException e)
 		{
@@ -1526,14 +1516,14 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * Checks the existence of a 'Unigram' in the ontology
+	 * Checks the existence of a 'Word' in the ontology
 	 * 
-	 * @param Unigram
+	 * @param Word
 	 */
 	public boolean exists(String Unigram)
 	{
 		if (Unigram.indexOf(' ') > -1)
-			throw new WordNetException(this, "expecting Word, got phrase: " + word);
+			throw new WordNetException(this, "expecting Word, got phrase: " + Unigram);
 
 		IndexWord[] XWord = null;
 		try
@@ -1543,7 +1533,7 @@ public class WordNetCore implements IWordNetCore
 				System.err.println("NULL DICT");
 				System.exit(1);
 			}
-			IndexWordSet XWords = m_Dictionary.lookupAllIndexWords(Word);
+			IndexWordSet XWords = m_Dictionary.lookupAllIndexWords(Unigram);
 
 			if (XWords == null || XWords.size() < 1)
 				return false;
@@ -1552,7 +1542,7 @@ public class WordNetCore implements IWordNetCore
 		}
 		catch (JWNLException e)
 		{
-			System.err.println("[WARN] " + e.getMessage()); // throw?
+			System.err.println("[WARN] " + e.getMessage());
 		}
 		return (XWord != null && XWord.length > 0);
 	}
@@ -1567,23 +1557,23 @@ public class WordNetCore implements IWordNetCore
 	{
 		for (Iterator i = Unigrams.iterator(); i.hasNext();)
 		{
-			String Word = (String) i.next();
-			if (!exists(Word))
+			String Unigram = (String) i.next();
+			if (!exists(Unigram))
 				i.remove();
 		}
 	}
 
 
-	private IndexWord FindIndexWord(String PartsOfSpeech, String Word)
+	private IndexWord FindIndexWord(String PartsOfSpeech, String Unigram)
 	{
-		return this.FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Word);
+		return this.FindIndexWord(TransformPartsOfSpeech(PartsOfSpeech), Unigram);
 	}
 
 	private POS TransformPartsOfSpeech(String PartsOfSpeech)
 	{
 		POS wnPartsOfSpeech = WordNetPos.getPos(PartsOfSpeech);
 		if (wnPartsOfSpeech == null)
-			throw new WordNetException(this, "Invalid Pos-String: '" + PartsOfSpeech + "'");
+			throw new WordNetException(this, "Invalid PartsOfSpeech-String: '" + PartsOfSpeech + "'");
 		return wnPartsOfSpeech;
 	}
 
@@ -1591,11 +1581,11 @@ public class WordNetCore implements IWordNetCore
 	{
 		if (cs == null)
 			return null;
-		String Word = cs.toString().replace('-', '_');
+		String Unigram = cs.toString().replace('-', '_');
 		IndexWord XWord = null;
 		try
 		{
-			XWord = m_Dictionary.lookupIndexWord(PartsOfSpeech, Word);
+			XWord = m_Dictionary.lookupIndexWord(PartsOfSpeech, Unigram);
 		}
 		catch (JWNLException e)
 		{
@@ -1603,9 +1593,10 @@ public class WordNetCore implements IWordNetCore
 		return XWord;
 	}
 
+
 	private String TransformLemmaToString(Word[] Unigrams, String delim, boolean TerminalDelimiterOK)
 	{
-		if (Unigrams == null || words.length == 0)
+		if (Unigrams == null || Unigrams.length == 0)
 			return null;
 		List LemmaSet = new ArrayList();
 		AddLemmas(Unigrams, LemmaSet);
@@ -1617,7 +1608,7 @@ public class WordNetCore implements IWordNetCore
 
 	private void AddLemmas(Word[] Unigrams, Collection LemmaSet)
 	{
-		if (Unigrams == null || words.length == 0)
+		if (Unigrams == null || Unigrams.length == 0)
 			return;
 		for (int k = 0; k < Unigrams.length; k++)
 			AddLemma(Unigrams[k], LemmaSet);
@@ -1635,7 +1626,7 @@ public class WordNetCore implements IWordNetCore
 		if (m_DiscardUpperCase && WordNetUtil.startsWithUppercase(lemma))
 			return;
 		lemma = NormalizeLemma(lemma);
-		if (!LemmaSet.contains(lemma)) 
+		if (!LemmaSet.contains(lemma))
 			LemmaSet.add(lemma);
 	}
 
@@ -1649,9 +1640,9 @@ public class WordNetCore implements IWordNetCore
 			PointerTargetNode targetNode = (PointerTargetNode) i.next();
 			if (!targetNode.isLexical())
 			{
-				Synset syn = targetNode.getSynset();
-				if (syn != null)
-					AddLemmas(syn.getWords(), LemmaSet);
+				Synset SynsetInstance = targetNode.getSynset();
+				if (SynsetInstance != null)
+					AddLemmas(SynsetInstance.getWords(), LemmaSet);
 			}
 			else
 			{
@@ -1668,10 +1659,10 @@ public class WordNetCore implements IWordNetCore
 			PointerTargetNode targetNode = (PointerTargetNode) i.next();
 			if (!targetNode.isLexical())
 			{
-				Synset syn = targetNode.getSynset();
-				if (syn != null)
+				Synset SynsetInstance = targetNode.getSynset();
+				if (SynsetInstance != null)
 				{
-					String s = TransformLemmaToString(syn.getWords(), delim, TerminalDelimiterOK);
+					String s = TransformLemmaToString(SynsetInstance.getWords(), delim, TerminalDelimiterOK);
 					l.add(s);
 				}
 			}
@@ -1685,7 +1676,7 @@ public class WordNetCore implements IWordNetCore
 		return l == null || l.size() < 1 ? null : l;
 	}
 
-	private static String trimFirstandLastChars(String s)
+	private static String PruneterminalCharacters(String s)
 	{
 		if (s.length() < 2)
 			throw new IllegalArgumentException("Invalid length String: '" + s + "'");
@@ -1700,19 +1691,16 @@ public class WordNetCore implements IWordNetCore
 		return lemma;
 	}
 
-
 	/**
 	 * Returns an array of all parts-of-speech ordered according to their polysemy
 	 * count, returning the PartsOfSpeech with the most different senses in the first
 	 * position, etc.
 	 * 
-	 * @return String[], one element for each part of speech ("a" = adjective, "n"
-	 *         = noun, "r" = adverb, "v" = verb), or null if not found.
 	 */
 	public String[] GetPartsOfSpeech(String Unigram)
 	{
 		IndexWord[] XWords = GetIndexWords(Unigram);
-		if (all == null)
+		if (XWords == null)
 			return null;
 		String[] PartsOfSpeech = new String[XWords.length];
 		for (int i = 0; i < XWords.length; i++)
@@ -1720,10 +1708,6 @@ public class WordNetCore implements IWordNetCore
 		return PartsOfSpeech;
 	}
 
-	/**
-	 * @return String from ("a" = adjective, "n" = noun, "r" = adverb, "v" =
-	 *         verb), or null if not found.
-	 */
 	public String GetPartsOfSpeech(int id)
 	{
 		Synset SynsetInstances = GetSynsetAtId(id);
@@ -1734,18 +1718,16 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns a String of characters, 1 for each part of speech: ("a" =
-	 * adjective, "n" = noun, "r" = adverb, "v" = verb) or an empty String if not
-	 * found.
-	 * <p>
+	 * adjective, "n" = noun, "r" = adverb, "v" = verb) or an empty String if not found.
 	 */
 	private String GetPartsOfSpeechStr(String Unigram)
 	{
 		String PartsOfSpeech = QQ;
-		IndexWord[] all = GetIndexWords(Unigram);
-		if (all == null)
+		IndexWord[] XWords = GetIndexWords(Unigram);
+		if (XWords == null)
 			return PartsOfSpeech;
-		for (int i = 0; i < all.length; i++)
-			PartsOfSpeech += all[i].getPOS().getKey();
+		for (int i = 0; i < XWords.length; i++)
+			PartsOfSpeech += XWords[i].getPOS().getKey();
 		return PartsOfSpeech;
 	}
 
@@ -1757,27 +1739,27 @@ public class WordNetCore implements IWordNetCore
 	 */
 	public String GetBestPartsOfSpeech(String Unigram)
 	{
-		IndexWord[] all = GetIndexWords(Unigram);
-		if (all == null || all.length < 1)
+		IndexWord[] XWords = GetIndexWords(Unigram);
+		if (XWords == null || XWords.length < 1)
 			return null;
-		POS p = all[0].getPOS();
-		if (p == POS.NOUN)
+		POS PartsOfSpeech = XWords[0].getPOS();
+		if (PartsOfSpeech == POS.NOUN)
 			return NOUN;
-		if (p == POS.VERB)
+		if (PartsOfSpeech == POS.VERB)
 			return VERB;
-		if (p == POS.ADVERB)
+		if (PartsOfSpeech == POS.ADVERB)
 			return ADV;
-		if (p == POS.ADJECTIVE)
+		if (PartsOfSpeech == POS.ADJECTIVE)
 			return ADJ;
-		throw new WordNetException("no PartsOfSpeech for Unigram: " + word);
+		throw new WordNetException("no PartsOfSpeech for Word: " + Unigram);
 	}
 
-	private IndexWord[] GetIndexWords(CharSequence Unigram)
+	private IndexWord[] GetIndexWords(CharSequence Word)
 	{
 		List list = new ArrayList();
 		for (Iterator itr = POS.getAllPOS().iterator(); itr.hasNext();)
 		{
-			IndexWord XWord = FindIndexWord((POS) itr.next(), Unigram.toString());
+			IndexWord XWord = FindIndexWord((POS) itr.next(), Word.toString());
 			if (XWord != null)
 			{
 				int polysemy = XWord.getSenseCount();
@@ -1844,7 +1826,7 @@ public class WordNetCore implements IWordNetCore
 	}
 
 	/**
-	 * @param query
+	 * @param Expression
 	 * @param l
 	 */
 	public static String[] GetStringVectorFromList(List l)
@@ -1857,17 +1839,18 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * @param l
 	 */
-	public String[] TransformNodeListToStrings(String query, PointerTargetNodeList ptnl)
+	private String[] TransformNodeListToStrings(String Expression, PointerTargetNodeList NodeList)
 	{
-		if (ptnl == null || ptnl.size() == 0)
+		if (NodeList == null || NodeList.size() == 0)
 			return null;
 		List l = new LinkedList();
-		GetLemmaSet(ptnl, l);
-	
-		if (query != null)
-			l.remove(query); 
+		GetLemmaSet(NodeList, l);
+		
+		if (Expression != null)
+			l.remove(Expression); // remove original
 		return GetStringVectorFromList(l);
 	}
+
 
 	/**
 	 * Returns a random example from a random word w' <code>PartsOfSpeech</code>
@@ -1897,8 +1880,8 @@ public class WordNetCore implements IWordNetCore
 				while (XWord == null || !m_DiscardCompoundWord && WordNetUtil.contains(XWord.getLemma(), " "))
 					XWord = m_Dictionary.getRandomIndexWord(TransformPartsOfSpeech(PartsOfSpeech));
 
-				Synset syn = XWord.getSenses()[0];
-				List l = GetExamples(syn);
+				Synset SynsetInstance = XWord.getSenses()[0];
+				List l = GetExamples(SynsetInstance);
 				if (l == null || l.size() < 1)
 					continue;
 				for (Iterator i = l.iterator(); i.hasNext();)
@@ -1989,7 +1972,6 @@ public class WordNetCore implements IWordNetCore
 		return Unigram.indexOf(' ') > 0 || Unigram.indexOf('-') > 0 || Unigram.indexOf('_') > 0;
 	}
 
-	/** @invisible */
 	public Dictionary GetDictionary()
 	{
 		return m_Dictionary;
@@ -1999,7 +1981,6 @@ public class WordNetCore implements IWordNetCore
 	 * Prints the full hyponym tree to System.out (primarily for debugging).
 	 * 
 	 * @param SenseId
-	 * @invisible
 	 */
 	public void DisplayHyponymTree(int SenseId)
 	{
@@ -2018,19 +1999,19 @@ public class WordNetCore implements IWordNetCore
 		SerializeHyponymTree(System.err, Unigram, PartsOfSpeech);
 	}
 
-	void SerializeHyponymTree(PrintStream ps, String Unigram, String PartsOfSpeech) throws JWNLException
+	void SerializeHyponymTree(PrintStream OutStream, String Unigram, String PartsOfSpeech) throws JWNLException
 	{
 		IndexWord XWord = FindIndexWord(PartsOfSpeech, Unigram);
-		Synset syn = XWord.getSense(1);
-		this.SerializeHyponymTree(ps, syn);
+		Synset SynsetInstance = XWord.getSense(1);
+		this.SerializeHyponymTree(OutStream, SynsetInstance);
 	}
 
-	void SerializeHyponymTree(PrintStream ps, Synset SynsetInstance) throws JWNLException
+	void SerializeHyponymTree(PrintStream OutStream, Synset SynsetInstance) throws JWNLException
 	{
 		PointerTargetTree hyponyms = null;
 		try
 		{
-			hyponyms = PointerUtils.getInstance().getHyponymTree(syn);
+			hyponyms = PointerUtils.getInstance().getHyponymTree(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
@@ -2039,10 +2020,10 @@ public class WordNetCore implements IWordNetCore
 			return;
 		Set SynsetInstances = new HashSet();
 		AddLemmas(SynsetInstance.getWords(), SynsetInstances);
-		ps.println("\nHyponyms of synset" + SynsetInstances + ":\n-------------------------------------------");
+		OutStream.println("\nHyponyms of synset" + SynsetInstances + ":\n-------------------------------------------");
 
-		hyponyms.print(ps);
-		ps.println();
+		hyponyms.print(OutStream);
+		OutStream.println();
 	}
 
 	/**
@@ -2054,9 +2035,8 @@ public class WordNetCore implements IWordNetCore
 	{
 		try
 		{
-			Synset s = GetSynsetAtId(SenseId);
-			// System.out.println("Syn: "+s);
-			SerializeHypernymTree(System.out, s);
+			Synset SynsetInstance = GetSynsetAtId(SenseId);
+			SerializeHypernymTree(System.out, SynsetInstance);
 		}
 		catch (JWNLException e)
 		{
@@ -2064,29 +2044,29 @@ public class WordNetCore implements IWordNetCore
 		}
 	}
 
-	void SerializeHypernymTree(String Word, String PartsOfSpeech) throws JWNLException
+	void SerializeHypernymTree(String Unigram, String PartsOfSpeech) throws JWNLException
 	{
-		SerializeHypernymTree(System.err, Word, PartsOfSpeech);
+		SerializeHypernymTree(System.err, Unigram, PartsOfSpeech);
 	}
 
-	void SerializeHypernymTree(PrintStream ps, String Word, String PartsOfSpeech) throws JWNLException
+	void SerializeHypernymTree(PrintStream OutStream, String Unigram, String PartsOfSpeech) throws JWNLException
 	{
-		IndexWord XWord = FindIndexWord(PartsOfSpeech, Word);
-		Synset syn = XWord.getSense(1);
-		SerializeHypernymTree(ps, syn);
+		IndexWord XWord = FindIndexWord(PartsOfSpeech, Unigram);
+		Synset SynsetInstance = XWord.getSense(1);
+		SerializeHypernymTree(OutStream, SynsetInstance);
 	}
 
-	void SerializeHypernymTree(PrintStream ps, Synset syn) throws JWNLException
+	void SerializeHypernymTree(PrintStream OutStream, Synset SynsetInstance) throws JWNLException
 	{
 		PointerTargetTree hypernyms = null;
 		try
 		{
-			hypernyms = PointerUtils.getInstance().getHypernymTree(syn);
+			hypernyms = PointerUtils.getInstance().getHypernymTree(SynsetInstance);
 		}
 		catch (StackOverflowError e)
 		{
 			PointerUtils.getInstance().setOverflowError(true);
-			hypernyms = PointerUtils.getInstance().getHypernymTree(syn);
+			hypernyms = PointerUtils.getInstance().getHypernymTree(SynsetInstance);
 		}
 		catch (NullPointerException e)
 		{
@@ -2094,10 +2074,431 @@ public class WordNetCore implements IWordNetCore
 		if (hypernyms == null)
 			return;
 		Set SynsetInstances = new HashSet();
-		AddLemmas(syn.getWords(), SynsetInstances);
-		ps.println("\nHypernyms of synset" + SynsetInstances + ":\n-------------------------------------------");
-		hypernyms.print(ps);
-		ps.println();
+		AddLemmas(SynsetInstance.getWords(), SynsetInstances);
+		OutStream.println("\nHypernyms of synset" + SynsetInstances + ":\n");
+		hypernyms.print(OutStream);
+		OutStream.println();
+	}
+
+	/**
+	 * Returns the min distance between any two senses for the 2 words in the
+	 * WordNet tree (result normalized to 0-1) with specified PartsOfSpeech, or 1.0 if
+	 * either is not found.
+	 */
+	public float GetDistance(String Lemma1, String Lemma2, String PartsOfSpeechStr)
+	{
+		if (Lemma1 == null || lemma1.contains(" "))
+			return -1;
+		if (Lemma2 == null || lemma2.contains(" "))
+			return -1;
+		
+		IndexWordSet XWords1, XWords2;
+		IndexWord XWord1, XWord2;
+
+		float Distance = 1.0f;
+		float MinimumDistance = 1.0f;
+		POS PartsOfSpeech = TransformPartsOfSpeech(PartsOfSpeechStr);
+
+		if (Lemma1.equals(Lemma2))
+		{
+			MinimumDistance = 0.0f;
+		}
+		else
+		{
+			try
+			{
+				// Get complete definition for each word (all POS, all senses)
+				XWords1 = this.m_Dictionary.lookupAllIndexWords(Lemma1);
+				XWords2 = this.m_Dictionary.lookupAllIndexWords(Lemma2);
+
+				if (XWords1.isValidPOS(PartsOfSpeech) && XWords2.isValidPOS(PartsOfSpeech))
+				{
+					XWord1 = XWords1.getIndexWord(PartsOfSpeech);
+					XWord2 = XWords2.getIndexWord(PartsOfSpeech);
+
+					// Get distance between words based on this POS
+					try
+					{
+						Distance = GetWordDistance(XWord1, XWord2);
+					}
+					catch (NullPointerException e)
+					{
+					}
+					if (Distance < MinimumDistance)
+					{
+						MinimumDistance = Distance;
+					}
+				}
+
+			}
+			catch (JWNLException e)
+			{
+				System.err.println("[WARN] Exception obtaining distance: " + e);
+				return 1.0f;
+			}
+		}
+
+		return MinimumDistance;
+	}
+
+	// Get distance between words that are the same POS
+	private float GetWordDistance(IndexWord XWord1, IndexWord XWord2) throws JWNLException, NullPointerException  
+	{
+		RelationshipList Relations;
+		AsymmetricRelationship Relation;
+		int AncestorIndex, RelationLength, NodeLevel, RootDepth, LeafDepth;
+		float MinimumDistance, CurrDistance;
+		PointerTargetNode CommonAncestor;
+		Synset SynsetInstance;
+		List AncestralHypernymList;
+		MinimumDistance = 1.0f;
+
+		int senseCount1 = XWord1.getSenseCount();
+		int senseCount2 = XWord2.getSenseCount();
+
+		// for each pairing of word senses...
+		for (int i = 1; i <= senseCount1; i++)
+		{
+			for (int j = 1; j <= senseCount2; j++)
+			{
+				try
+				{
+					Relations = RelationshipFinder.getInstance().findRelationships
+						(XWord1.getSense(i), XWord2.getSense(j), PointerType.HYPERNYM);
+				}
+				catch (Exception e)
+				{
+					continue;
+				}
+
+				// calculate distance for each one
+				for (Iterator RelationIter = Relations.iterator(); RelationIter.hasNext();)
+				{
+					Relation = (AsymmetricRelationship) RelationIter.next();
+					AncestorIndex = Relation.getCommonParentIndex();
+					RelationLength = Relation.getDepth();
+
+					// distance between items going through the common ancestor
+					// (NodeLevel of furthest word from common ancestor)
+					LeafDepth = Math.max(RelationLength - AncestorIndex, AncestorIndex);
+
+					CommonAncestor = (PointerTargetNode) Relation.getNodeList().get(AncestorIndex);
+					SynsetInstance = CommonAncestor.getSynset();
+					
+					// get all the hypernyms of the CPI synset
+					AncestralHypernymList = (PointerUtils.getInstance().getHypernymTree(SynsetInstance)).toList();
+
+					// get shortest NodeLevel from root to common ancestor
+					RootDepth = -1;
+					for (Iterator AncestralHypernymListIter = AncestralHypernymList.iterator(); AncestralHypernymListIter.hasNext();)
+					{
+						NodeLevel = ((List) AncestralHypernymListIter.next()).size();
+						if (RootDepth == -1)
+						{
+							RootDepth = NodeLevel;
+						}
+						else
+						{
+							if (NodeLevel < RootDepth)
+							{
+								RootDepth = NodeLevel;
+							}
+						}
+					}
+
+					// normalize the MinimumDistance
+					CurrDistance = (float) LeafDepth / (RootDepth + LeafDepth);
+					if (CurrDistance < MinimumDistance)
+					{
+						MinimumDistance = CurrDistance;
+					}
+				}
+			}
+		}
+		return MinimumDistance;
+	}
+
+	/**
+	 * Returns array of whole-to-part relationships for 1st sense of word/PartsOfSpeech, or null if not found
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetMeronyms(String Expression, String PartsOfSpeech)
+	{
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtIndex(Expression, PartsOfSpeech, 1);
+			if (SynsetInstance == null)
+				return null;
+
+			PointerTargetNodeList NodeList = null;
+			try
+			{
+				NodeList = PointerUtils.getInstance().getMeronyms(SynsetInstance);
+			}
+			catch (NullPointerException e)
+			{
+			}
+			return TransformNodeListToStrings(Expression, NodeList);
+		}
+
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/**
+	 * Returns array of whole-to-part relationships for id, or null if not found
+	 */
+	public String[] GetMeronyms(int id)
+	{
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtId(id);
+			if (SynsetInstance == null)
+				return null;
+
+			PointerTargetNodeList NodeList = null;
+			try
+			{
+				NodeList = PointerUtils.getInstance().getMeronyms(SynsetInstance);
+			}
+			catch (NullPointerException e)
+			{
+			}
+			return TransformNodeListToStrings(null, NodeList);
+		}
+
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/**
+	 * Returns array of whole-to-part relationships for all senses of word/PartsOfSpeech, or null if not found
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllMeronyms(String Expression, String PartsOfSpeech)
+	{
+		try
+		{
+			Synset[] SynsetInstances = GetAllSynsets(Expression, PartsOfSpeech);
+			if (SynsetInstances == null)
+				return null;
+
+			List MeronymList = new LinkedList();
+			for (int i = 0; i < SynsetInstances.length; i++)
+			{
+				if (SynsetInstances[i] == null)
+					continue;
+
+				PointerTargetNodeList NodeList = null;
+				try
+				{
+					NodeList = PointerUtils.getInstance().getMeronyms(SynsetInstances[i]);
+				}
+				catch (NullPointerException e)
+				{
+				}
+				GetLemmaSet(NodeList, MeronymList);
+			}
+			MeronymList.remove(Expression); 
+			return GetStringVectorFromList(MeronymList);
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/**
+	 * Returns part-to-whole relationships for 1st sense of word/PartsOfSpeech, or none if not found
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetHolonyms(String Expression, String PartsOfSpeech)
+	{
+		PointerTargetNodeList NodeList = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtIndex(Expression, PartsOfSpeech, 1);
+			if (SynsetInstance == null)
+				return null;
+
+			NodeList = PointerUtils.getInstance().getHolonyms(SynsetInstance);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+
+		return TransformNodeListToStrings(Expression, NodeList);
+	}
+
+	/**
+	 * Returns part-to-whole relationships for 1st sense of word/PartsOfSpeech, or none if not found
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetHolonyms(int id)
+	{
+		PointerTargetNodeList NodeList = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtId(id);
+			if (SynsetInstance == null)
+				return null;
+
+			NodeList = PointerUtils.getInstance().getHolonyms(SynsetInstance);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+		return TransformNodeListToStrings(null, NodeList);
+	}
+
+	/**
+	 * Returns part-to-whole relationships for all sense of word/PartsOfSpeech, or none if not found
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllHolonyms(String Expression, String PartsOfSpeech)
+	{
+		try
+		{
+			Synset[] SynsetInstances = GetAllSynsets(Expression, PartsOfSpeech);
+			if (SynsetInstances == null)
+				return null;
+
+			List HolonymList = new LinkedList();
+			for (int i = 0; i < SynsetInstances.length; i++)
+			{
+				if (SynsetInstances[i] == null)
+					continue;
+				PointerTargetNodeList NodeList = null;
+				try
+				{
+					NodeList = PointerUtils.getInstance().getHolonyms(SynsetInstances[i]);
+				}
+				catch (NullPointerException e)
+				{
+				}
+				GetLemmaSet(NodeList, HolonymList);
+			}
+			HolonymList.remove(Expression); 
+			return GetStringVectorFromList(HolonymList);
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/**
+	 * Returns coordinate terms for 1st sense of word/PartsOfSpeech, or null if not found<br>
+	 * X is a coordinate term of Y if there exists a term Z which is the hypernym of both X and Y.
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetCoordinates(String Expression, String PartsOfSpeech)
+	{
+		String[] result = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtIndex(Expression, PartsOfSpeech, 1);
+			if (SynsetInstance == null)
+				return null;
+			PointerTargetNodeList NodeList = PointerUtils.getInstance().getCoordinateTerms(SynsetInstance);
+			if (NodeList != null)
+				result = TransformNodeListToStrings(Expression, NodeList);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns String[] of Coordinates for the specified id, or null if not found<br>
+	 */
+	public String[] GetCoordinates(int id)
+	{
+		String[] result = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtId(id);
+			if (SynsetInstance == null)
+				return null;
+			PointerTargetNodeList NodeList = PointerUtils.getInstance().getCoordinateTerms(SynsetInstance);
+			if (NodeList != null)
+				result = TransformNodeListToStrings(null, NodeList);
+		}
+		catch (NullPointerException e)
+		{
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns coordinate terms for all sense of word/PartsOfSpeech, or null if not found<br>
+	 * X is a coordinate term of Y if there exists a term Z which is the hypernym of both X and Y.
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllCoordinates(String Expression, String PartsOfSpeech)
+	{
+		try
+		{
+			Synset[] SynsetInstances = GetAllSynsets(Expression, PartsOfSpeech);
+			if (SynsetInstances == null)
+				return null;
+			List CoordinateList = new LinkedList();
+			for (int i = 0; i < SynsetInstances.length; i++)
+			{
+				if (SynsetInstances[i] == null)
+					continue;
+				PointerTargetNodeList NodeList = null;
+				try
+				{
+					NodeList = PointerUtils.getInstance().getCoordinateTerms(SynsetInstances[i]);
+				}
+				catch (NullPointerException e)
+				{
+				}
+				GetLemmaSet(NodeList, CoordinateList);
+			}
+			CoordinateList.remove(Expression);
+			return GetStringVectorFromList(CoordinateList);
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
 	}
 
 }
