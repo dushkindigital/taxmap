@@ -45,7 +45,7 @@ import net.didion.jwnl.dictionary.Dictionary;
 import net.didion.jwnl.dictionary.FileBackedDictionary;
 
 /**
- * Provides library support for application and applet access to Wordnet.
+ * Provides library support for application access to Wordnet.
  * @author Chiranjit Acharya
  */
 public class WordNetCore implements IWordNetCore
@@ -65,7 +65,7 @@ public class WordNetCore implements IWordNetCore
 	public static final String ADV = "r";
 
 	/**
-	 * @invisible debug flag to toggle verbose output
+	 * debug flag to toggle verbose output
 	 */
 	public static final boolean DBUG = false;
 
@@ -224,8 +224,6 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * ending with the given <code>Unigram</code>.
-	 * <p>
-	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param Unigram
 	 * @param PartsOfSpeech
@@ -239,8 +237,6 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * ending with the given <code>Unigram</code>.
-	 * <p>
-	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param Unigram
 	 * @param PartsOfSpeech
@@ -253,8 +249,6 @@ public class WordNetCore implements IWordNetCore
 	/**
 	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
 	 * starting with the given <code>Unigram</code>.
-	 * <p>
-	 * Example: 'turn' returns 'turntable'
 	 * 
 	 * @param Unigram
 	 * @param PartsOfSpeech
@@ -296,7 +290,6 @@ public class WordNetCore implements IWordNetCore
 
 	/**
 	 * Returns up to <code>maxResults</code> of the specified <code>PartsOfSpeech</code>
-	 * Example: 'table' returns 'turntable' & 'uncomfortable'
 	 * 
 	 * @param pattern
 	 * @param PartsOfSpeech
@@ -391,7 +384,7 @@ public class WordNetCore implements IWordNetCore
 	 * @param Unigrams
 	 * @param PartsOfSpeech
 	 * @param maxResults
-	 * @invisible
+	 * 
 	 */
 	public String[] FilterByOR(int[] filterFlags, String[] Unigrams, POS PartsOfSpeech, int maxResults)
 	{
@@ -707,7 +700,7 @@ public class WordNetCore implements IWordNetCore
 		 */
 		// System.err.println("Hypernyms: "+WordNetUtil.asList(result));
 
-		result = GetSimilar(SenseId);
+		result = GetIdenticalSenses(SenseId);
 		this.AddSynsetsToSet(result, set);
 		// System.err.println("Similar: "+WordNetUtil.asList(result));
 
@@ -715,7 +708,7 @@ public class WordNetCore implements IWordNetCore
 		this.AddSynsetsToSet(result, set);
 		// System.err.println("Coordinates: "+WordNetUtil.asList(result));
 
-		result = GetAlsoSees(SenseId);
+		result = GetProximalTerms(SenseId);
 		this.AddSynsetsToSet(result, set);
 		// System.err.println("AlsoSees: "+WordNetUtil.asList(result));
 
@@ -744,10 +737,10 @@ public class WordNetCore implements IWordNetCore
 		result = GetHypernyms(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
-		result = GetSimilar(Unigram, PartsOfSpeech);
+		result = GetIdenticalSenses(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
-		result = GetAlsoSees(Unigram, PartsOfSpeech);
+		result = GetProximalTerms(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 
 		result = GetCoordinates(Unigram, PartsOfSpeech);
@@ -790,12 +783,12 @@ public class WordNetCore implements IWordNetCore
 		if (dbug)
 			System.err.println("Set: " + WordNetUtil.asList(set));
 
-		result = GetAllSimilar(Unigram, PartsOfSpeech);
+		result = GetAllIdenticalSenses(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("Similar: " + WordNetUtil.asList(result));
 
-		result = GetAllAlsoSees(Unigram, PartsOfSpeech);
+		result = GetAllProximalTerms(Unigram, PartsOfSpeech);
 		this.AddSynsetsToSet(result, set);
 		if (dbug)
 			System.err.println("AlsoSees: " + WordNetUtil.asList(result));
@@ -1270,7 +1263,7 @@ public class WordNetCore implements IWordNetCore
 	public String[] GetHyponyms(String Unigram, String PartsOfSpeech)
 	{
 		Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, 1);
-		// System.out.println("SynsetInstance="+(SynsetInstance.toString()));
+
 		PointerTargetNodeList NodeList = null;
 		try
 		{
@@ -2501,4 +2494,350 @@ public class WordNetCore implements IWordNetCore
 		}
 	}
 
+	/**
+	 * Returns verb group for 1st sense of verb or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetVerbGroup(String Expression, String PartsOfSpeech)
+	{
+		PointerTargetNodeList NodeList = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtIndex(Expression, PartsOfSpeech, 1);
+			if (SynsetInstance == null)
+				return null;
+			try
+			{
+				NodeList = PointerUtils.getInstance().getVerbGroup(SynsetInstance);
+			}
+			catch (NullPointerException e)
+			{
+			}
+			if (NodeList == null)
+				return null;
+
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+		return TransformNodeListToStrings(Expression, NodeList);
+	}
+
+	/**
+	 * Returns verb group for id, or null if not found<br>
+	 */
+	public String[] GetVerbGroup(int id)
+	{
+		PointerTargetNodeList NodeList = null;
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtId(id);
+			if (SynsetInstance == null)
+				return null;
+			try
+			{
+				NodeList = PointerUtils.getInstance().getVerbGroup(SynsetInstance);
+			}
+			catch (NullPointerException e)
+			{
+			}
+			if (NodeList == null)
+				return null;
+
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+		return TransformNodeListToStrings(null, NodeList);
+	}
+
+	/**
+	 * Returns verb group for all senses of verb or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllVerbGroups(String Expression, String PartsOfSpeech)
+	{
+		try
+		{
+			Synset[] SynsetInstances = GetAllSynsets(Expression, PartsOfSpeech);
+			if (SynsetInstances == null)
+				return null;
+			List l = new LinkedList();
+			for (int i = 0; i < SynsetInstances.length; i++)
+			{
+				if (SynsetInstances[i] == null)
+					continue;
+				PointerTargetNodeList NodeList = null;
+				try
+				{
+					NodeList = PointerUtils.getInstance().getVerbGroup(SynsetInstances[i]);
+				}
+				catch (NullPointerException e)
+				{
+				}
+				GetLemmaSet(NodeList, l);
+			}
+			l.remove(Expression);
+			return GetStringVectorFromList(l);
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/**
+	 * Returns derived terms for 1st sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetDerivedTerms(String Expression, String PartsOfSpeech)
+	{
+		return GetPointerTargetsAtIndex(Expression, PartsOfSpeech, PointerType.DERIVED, 1);
+	}
+
+	/**
+	 * Returns derived terms for the id, or null if not found<br>
+	 */
+	public String[] GetDerivedTerms(int id)
+	{
+		return GetPointerTargetsAtId(id, PointerType.DERIVED);
+	}
+
+	/**
+	 * Returns derived terms forall senses of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllDerivedTerms(String Expression, String PartsOfSpeech)
+	{
+		return GetAllPointerTargets(Expression, PartsOfSpeech, PointerType.DERIVED);
+	}
+
+	/**
+	 * Returns also-see terms for 1st sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetProximalTerms(String Expression, String PartsOfSpeech)
+	{
+		return GetPointerTargetsAtIndex(Expression, PartsOfSpeech, PointerType.SEE_ALSO, 1);
+	}
+
+	/**
+	 * Returns also-see terms for seseId or null if not found<br>
+	 * 
+	 * @param SenseId
+	 */
+	public String[] GetProximalTerms(int SenseId)
+	{
+		return GetPointerTargetsAtId(SenseId, PointerType.SEE_ALSO);
+	}
+
+	/**
+	 * Returns also-see terms for all senses ofword/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllProximalTerms(String Expression, String PartsOfSpeech)
+	{
+		return GetAllPointerTargets(Expression, PartsOfSpeech, PointerType.SEE_ALSO);
+	}
+
+	/**
+	 * Returns attribute terms for word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 *
+	 */
+
+	/**
+	 * Returns nominalized terms for 1st sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetNominalizations(String Expression, String PartsOfSpeech)
+	{
+		return GetPointerTargetsAtIndex(Expression, PartsOfSpeech, PointerType.NOMINALIZATION, 1);
+	}
+
+
+	/**
+	 * Returns nominalized terms for id, or null if not found<br>
+	 */
+	public String[] GetNominalizations(int id)
+	{
+		return GetPointerTargetsAtId(id, PointerType.NOMINALIZATION);
+	}
+
+	/**
+	 * Returns nominalized terms for all sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllNominalizations(String Expression, String PartsOfSpeech)
+	{
+		return GetAllPointerTargets(Expression, PartsOfSpeech, PointerType.NOMINALIZATION);
+	}
+
+	/**
+	 * Returns similar-to list for first sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 *
+	 */
+	public String[] GetIdenticalSenses(String Expression, String PartsOfSpeech)
+	{
+		return GetPointerTargetsAtIndex(Expression, PartsOfSpeech, PointerType.SIMILAR_TO, 1);
+	}
+
+	/**
+	 * Returns similar-to list for id, or null if not found<br>
+	 *
+	 */
+	public String[] GetIdenticalSenses(int id)
+	{
+		return GetPointerTargetsAtId(id, PointerType.SIMILAR_TO);
+	}
+
+	/**
+	 * Returns similar-to list for all sense of word/PartsOfSpeech or null if not found<br>
+	 * 
+	 * @param Expression
+	 * @param PartsOfSpeech
+	 */
+	public String[] GetAllIdenticalSenses(String Expression, String PartsOfSpeech)
+	{
+		return GetAllPointerTargets(Expression, PartsOfSpeech, PointerType.SIMILAR_TO);
+	}
+
+
+	private POS TransformPartsOfSpeech(CharSequence PartsOfSpeech)
+	{
+		if (PartsOfSpeech == null)
+			PartsOfSpeech = "";
+		return TransformPartsOfSpeech(PartsOfSpeech.toString());
+	}
+
+
+	/* Get all the pointer targets of <var>SynsetInstance</var> of type <var>TypeInfo</var>. */
+	private PointerTargetNodeList getPointerTargets(Synset SynsetInstance, PointerType TypeInfo) throws JWNLException
+	{
+		if (SynsetInstance == null)
+			return null;
+
+		PointerTarget[] Targets;
+		try
+		{
+			Targets = SynsetInstance.getTargets(TypeInfo);
+			if (Targets == null || Targets.length == 0)
+				return null;
+		}
+		catch (NullPointerException e)
+		{
+			return null;
+		}
+
+		return new PointerTargetNodeList(Targets);
+	}
+
+	public boolean DiscardCompoundWordOK()
+	{
+		return this.m_DiscardCompoundWord;
+	}
+
+	public void DiscardCompoundWords(boolean DiscardCompoundWords)
+	{
+		this.m_DiscardCompoundWord = DiscardCompoundWords;
+	}
+
+	public boolean DiscardUpperCaseWordsOK()
+	{
+		return this.m_DiscardUpperCase;
+	}
+
+	public void DiscardUpperCaseWords(boolean DiscardUpperCaseWords)
+	{
+		this.m_DiscardUpperCase = DiscardUpperCaseWords;
+	}
+
+	private String[] GetAllPointerTargets(String Unigram, String PartsOfSpeech, PointerType TypeInfo)
+	{
+		Synset[] SynsetInstance = GetAllSynsets(Unigram, PartsOfSpeech);
+		if (SynsetInstance == null || SynsetInstance.length < 1)
+			return null;
+		List result = new LinkedList();
+		for (int i = 0; i < SynsetInstance.length; i++)
+		{
+			try
+			{
+				PointerTargetNodeList NodeList = getPointerTargets(SynsetInstance[i], TypeInfo);
+				String[] targets = TransformNodeListToStrings(Unigram, NodeList);
+				if (targets == null)
+					continue;
+				for (int j = 0; j < targets.length; j++)
+				{
+					if (targets[j] != null)
+						AddLemma(targets[j], result);
+				}
+			}
+			catch (JWNLException e)
+			{
+				throw new WordNetException(e);
+			}
+		}
+		result.remove(Unigram);
+		return GetStringVectorFromList(result);
+	}
+
+	/*
+	 * Get a String[] from the pointer targets of <var>SynsetInstance</var> of TypeInfo
+	 * <var>TypeInfo</var>.
+	 */
+	private String[] GetPointerTargetsAtIndex(String Unigram, String PartsOfSpeech, PointerType TypeInfo, int index)
+	{
+		try
+		{
+			Synset SynsetInstance = GetSynsetAtIndex(Unigram, PartsOfSpeech, index);
+			if (SynsetInstance == null)
+				return null;
+			return TransformNodeListToStrings(Unigram, GetPointerTargets(SynsetInstance, TypeInfo));
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(this, e);
+		}
+	}
+
+	/*
+	 * Get a String[] from the pointer <var>id</var> of TypeInfo <var>TypeInfo</var>.
+	 */
+	private String[] GetPointerTargetsAtId(int id, PointerType TypeInfo)
+	{
+		Synset SynsetInstance = GetSynsetAtId(id);
+		if (SynsetInstance == null)
+			return null;
+		try
+		{
+			return TransformNodeListToStrings(null, GetPointerTargets(SynsetInstance, TypeInfo));
+		}
+		catch (JWNLException e)
+		{
+			throw new WordNetException(e);
+		}
+	}
 }
