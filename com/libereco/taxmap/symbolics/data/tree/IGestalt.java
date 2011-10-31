@@ -21,46 +21,46 @@ public interface IGestalt
 	/**
 	 * Sets a new root node for the gestalt.
 	 */
-	void setRootNode(INode root);
+	void SetRootNode(INode node);
 
 	/**
 	 * Returns the root node of the gestalt.
 	 */
-	INode getRootNode();
+	INode GetRootNode();
 
 	/**
 	 * Returns true if the gestalt has a root node.
 	 */
-	boolean hasRootNode();
+	boolean HasRootNode();
 
 	/**
 	 * Creates a node.
 	 */
-	INode createNode();
+	INode CreateNode();
 
 	/**
 	 * Creates a new node with the given name.
 	 */
-	INode createNode(String name);
+	INode CreateNode(String name);
 
 	/**
 	 * Creates a root node.
 	 */
-	INode createRootNode();
+	INode CreateRootNode();
 
 	/**
 	 * Creates a root node with a name.
 	 */
-	INode createRootNode(String name);
+	INode CreateRootNode(String name);
 
 	/**
 	 * Returns iterator over all gestalt nodes.
 	 */
-	Iterator<INode> getNodeIterator();
+	Iterator<INode> GetNodeIterator();
 
 	/**
 	 * Returns unmodifiable list of all gestalt nodes.
 	 */
-	List<INode> getNodeList();
+	List<INode> GetNodeList();
 }
 

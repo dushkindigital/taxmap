@@ -1,3 +1,11 @@
+/**
+ *  Copyright (C) 2011 Dushkin Digital Media, LLC
+ *  500 E 77th Street, Ste. 806
+ *  New York, NY 10162
+ *
+ *  All rights reserved.
+ **/
+
 package com.libereco.taxmap.symbolics.data.tree;
 
 import java.util.List;
@@ -6,64 +14,65 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * A Gestalt that is built on top a tree data structure.
+ * A Gestalt class is built on top a tree data structure.
+ * @author Chiranjit Acharya
  */
 public class Gestalt implements IGestalt, IHierarchy 
 {
-	private INode _root;
-	private ArrayList<INode> _nodeList;
+	private INode m_TopNode;
+	private ArrayList<INode> m_NodeList;
 
 	public Gestalt() 
 	{
-		_root = null;
-		_nodeList = null;
+		m_TopNode = null;
+		m_NodeList = null;
 	}
 
-	public void setRootNode(INode node) 
+	public void SetRootNode(INode node) 
 	{
-		this._root = node;
-		_root.addHierarchy(this);
+		this.m_TopNode = node;
+		m_TopNode.addHierarchy(this);
 	}
 
-	public INode getRootNode() 
+	public INode GetRootNode() 
 	{
-		return _root;
+		return m_TopNode;
 	}
 
-	public boolean hasRootNode() 
+	public boolean HasRootNode() 
 	{
-		return _root != null;
+		return m_TopNode != null;
 	}
 
-	public INode createNode() 
+	public INode CreateNode() 
 	{
 		return new Node();
 	}
 
-	public INode createNode(String name) 
+	public INode CreateNode(String name) 
 	{
 		return new Node(name);
 	}
 
-	public INode createRootNode() 
+	public INode CreateRootNode() 
 	{
-		_root = new Node();
-		_root.addHierarchy(this);
-		return _root;
+		m_TopNode = new Node();
+		m_TopNode.addHierarchy(this);
+		return m_TopNode;
 	}
 
-	public INode createRootNode(String name) 
+	public INode CreateRootNode(String name) 
 	{
 		INode node = createRootNode();
 		node.getNodeData().setName(name);
 		return node;
 	}
 
-	public Iterator<INode> getNodeIterator() 
+	public Iterator<INode> GetNodeIterator() 
 	{
 		if (hasRootNode()) 
 		{
-			return new Node.StartIterator(_root, _root.getDescendants());
+			return new Node.StartIterator(m_TopNode, m_TopNode.getDescendants());
 		} 
 		else 
 		{
@@ -71,21 +80,21 @@ public class Gestalt implements IGestalt, IHierarchy
 		}
 	}
 
-	public List<INode> getNodeList() 
+	public List<INode> GetNodeList() 
 	{
-		if (_nodeList != null) 
+		if (m_NodeList != null) 
 		{
-			return Collections.unmodifiableList(_nodeList);
+			return Collections.unmodifiableList(m_NodeList);
 		} 
 		else 
 		{
-			if (hasRootNode()) 
+			if (HasRootNode()) 
 			{
-				_nodeList = new ArrayList<INode>();
-				_nodeList.add(root);
-				_nodeList.addAll(root.getDescendantsList());
-				_nodeList.trimToSize();
-				return Collections.unmodifiableList(_nodeList);
+				m_NodeList = new ArrayList<INode>();
+				m_NodeList.add(m_TopNode);
+				m_NodeList.addAll(m_TopNode.getDescendantsList());
+				m_NodeList.trimToSize();
+				return Collections.unmodifiableList(m_NodeList);
 			} 
 			else 
 			{
@@ -94,18 +103,18 @@ public class Gestalt implements IGestalt, IHierarchy
 		}
 	}
 
-	public void trim() 
+	public void Trim() 
 	{
-		if (_root instanceof Node) 
+		if (m_TopNode instanceof Node) 
 		{
-			((Node) _root).trim();
+			((Node) m_TopNode).trim();
 		}
 	}
 
-	public void changeTree() 
+	public void ChangeTree() 
 	{
-		_root = null;
-		_nodeList = null;
+		m_TopNode = null;
+		m_NodeList = null;
 	}
 }
 

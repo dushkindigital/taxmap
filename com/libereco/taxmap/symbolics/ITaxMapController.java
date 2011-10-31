@@ -12,7 +12,7 @@ import com.libereco.taxmap.symbolics.config.*;
 import com.libereco.taxmap.symbolics.data.*;
 import com.libereco.taxmap.symbolics.reader.*;
 import com.libereco.taxmap.symbolics.normalizer.*;
-import com.libereco.taxmap.symbolics.writer.*;
+import com.libereco.taxmap.symbolics.serializer.*;
 
 /**
  * Top level interface for taxonomy mapping functionalities.
@@ -23,10 +23,10 @@ import com.libereco.taxmap.symbolics.writer.*;
 public interface ITaxMapController extends IConfigurable {
 
     /**
-     * Creates a context instance.
-     * @return a context instance
+     * Creates a gestalt instance.
+     * @return a gestalt instance
      */
-    public IContext createContext();
+    public IGestalt createGestalt();
 
     /**
      * Returns mapping factory.
@@ -35,43 +35,43 @@ public interface ITaxMapController extends IConfigurable {
     public IMapFactory getMapFactory();
 
     /**
-     * Uses current reader to read the context from external source into internal data structure.
+     * Uses current reader to read the gestalt from external source into internal data structure.
      *
      * @param fileName a string passed to the current reader
-     * @return interface to internal context representation
+     * @return interface to internal gestalt representation
      * @throws TaxMapException 
      */
-    IContext readContext(String fileName) throws TaxMapException;
+    IGestalt readGestalt(String fileName) throws TaxMapException;
 
     /**
-     * Returns currently configured context reader.
-     * @return currently configured context reader
+     * Returns currently configured gestalt reader.
+     * @return currently configured gestalt reader
      */
-    IContextReader getContextReader();
+    IGestaltReader getGestaltReader();
 
     /**
-     * Writes the context using a current writer.
-     * @param ctxSource context to be written
-     * @param fileName  a write destination passed to the context writer
+     * Serializes the gestalt using a current serializer.
+     * @param Gestalt1 gestalt to be written
+     * @param fileName  a serialize destination passed to the gestalt serializer
      * @throws TaxMapException 
      */
-    void writeContext(IContext ctxSource, String fileName) throws TaxMapException;
+    void serializeGestalt(IGestalt Gestalt1, String fileName) throws TaxMapException;
 
     /**
-     * Returns currently configured context writer.
-     * @return currently configured context writer
+     * Returns currently configured gestalt serializer.
+     * @return currently configured gestalt serializer
      */
-    IContextWriter getContextWriter();
+    IGestaltSerializer getGestaltSerializer();
 
     /**
-     * Reads the mapping between source and target contexts using the current mapping reader.
-     * @param ctxSource source context
-     * @param ctxTarget target context
+     * Reads the mapping between source and target gestalts using the current mapping reader.
+     * @param Gestalt1 source gestalt
+     * @param Gestalt2 target gestalt
      * @param inputFile a mapping location passed to the mapping reader
      * @return a mapping
      * @throws TaxMapException 
      */
-    IContextMap<INode> readMap(IContext ctxSource, IContext ctxTarget, String inputFile) throws TaxMapException;
+    IGestaltMap<INode> readMap(IGestalt Gestalt1, IGestalt Gestalt2, String inputFile) throws TaxMapException;
 
     /**
      * Returns currently configured mapping reader.
@@ -80,18 +80,18 @@ public interface ITaxMapController extends IConfigurable {
     IMapReader getMapReader();
 
     /**
-     * Writes the mapping using a current mapping writer.
+     * Serializes the mapping using a current mapping serializer.
      * @param mapping    a mapping
-     * @param outputFile a write destination passed to the mapping writer
+     * @param outputFile a serialize destination passed to the mapping serializer
      * @throws TaxMapException 
      */
-    void writeMap(IContextMap<INode> mapping, String outputFile) throws TaxMapException;
+    void serializeMap(IGestaltMap<INode> mapping, String outputFile) throws TaxMapException;
 
     /**
-     * Returns currently configured mapping writer.
-     * @return currently configured mapping writer
+     * Returns currently configured mapping serializer.
+     * @return currently configured mapping serializer
      */
-    IMapWriter getMapWriter();
+    IMapSerializer getMapSerializer();
 
     /**
      * Filters a mapping. For example, filtering could be a minimization.
@@ -99,70 +99,70 @@ public interface ITaxMapController extends IConfigurable {
      * @return a filtered mapping
      * @throws TaxMapException 
      */
-    IContextMap<INode> filterMap(IContextMap<INode> mapping) throws TaxMapException;
+    IGestaltMap<INode> filterMap(IGestaltMap<INode> mapping) throws TaxMapException;
 
     /**
      * Performs the first step of the taxonomy mapping algorithm.
-     * @param context interface to a context to be normalized
+     * @param gestalt interface to a gestalt to be normalized
      * @throws TaxMapException 
      */
-    void normalize(IContext context) throws TaxMapException;
+    void normalize(IGestalt gestalt) throws TaxMapException;
 
     /**
-     * Returns currently configured context normalizer.
-     * @return currently configured context normalizer
+     * Returns currently configured gestalt normalizer.
+     * @return currently configured gestalt normalizer
      */
-    IContextNormalizer getContextNormalizer();
+    IGestaltNormalizer getGestaltNormalizer();
 
     /**
      * Performs the second step of the taxonomy mapping algorithm.
-     * @param context interface to the normalized context
+     * @param gestalt interface to the normalized gestalt
      * @throws TaxMapException 
      */
-    void classify(IContext context) throws TaxMapException;
+    void classify(IGestalt gestalt) throws TaxMapException;
 
     /**
      * Performs the third step of taxonomy mapping algorithm.
-     * @param sourceContext interface of source context with concept at node formula
-     * @param targetContext interface of target context with concept at node formula
-     * @return interface to a matrix of semantic relations between atomic concepts of labels in the contexts
+     * @param Gestalt1 interface of source gestalt with concept at node formula
+     * @param Gestalt2 interface of target gestalt with concept at node formula
+     * @return interface to a matrix of semantic relations between atomic concepts of labels in the gestalts
      * @throws TaxMapException 
      */
-    IContextMap<IAtomicConceptOfLabel> elementLevelMap(IContext sourceContext, IContext targetContext) throws TaxMapException;
+    IGestaltMap<IAtomicConceptOfLabel> elementLevelMap(IGestalt Gestalt1, IGestalt Gestalt2) throws TaxMapException;
 
     /**
      * Performs the fourth step of taxonomy mapping algorithm.
-     * @param sourceContext interface of source context with concept at node formula
-     * @param targetContext interface of target context with concept at node formula
-     * @param conceptMap   mapping between atomic concepts of labels in the contexts
-     * @return mapping between the concepts at nodes in the contexts
+     * @param Gestalt1 interface of source gestalt with concept at node formula
+     * @param Gestalt2 interface of target gestalt with concept at node formula
+     * @param conceptMap   mapping between atomic concepts of labels in the gestalts
+     * @return mapping between the concepts at nodes in the gestalts
      * @throws TaxMapException 
      */
-    IContextMap<INode> structureLevelMap(IContext sourceContext, IContext targetContext,
-                                                  IContextMap<IAtomicConceptOfLabel> conceptMap) throws TaxMapException;
+    IGestaltMap<INode> structureLevelMap(IGestalt Gestalt1, IGestalt Gestalt2,
+                                                  IGestaltMap<IAtomicConceptOfLabel> conceptMap) throws TaxMapException;
 
     /**
      * Performs the first two steps of the taxonomy mapping algorithm.
-     * @param context interface to context to be normalized
+     * @param gestalt interface to gestalt to be normalized
      * @throws TaxMapException 
      */
-    void offline(IContext context) throws TaxMapException;
+    void offline(IGestalt gestalt) throws TaxMapException;
 
     /**
      * Performs the last two steps of the taxonomy mapping algorithm.
-     * @param sourceContext interface to normalized source context to be matched
-     * @param targetContext interface to normalized target context to be matched
+     * @param Gestalt1 interface to normalized source gestalt to be matched
+     * @param Gestalt2 interface to normalized target gestalt to be matched
      * @return interface to finally derived mapping
      * @throws TaxMapException 
      */
-    IContextMap<INode> online(IContext sourceContext, IContext targetContext) throws TaxMapException;
+    IGestaltMap<INode> online(IGestalt Gestalt1, IGestalt Gestalt2) throws TaxMapException;
 
     /**
      * Performs the whole matching process.
-     * @param sourceContext interface to source context to be matched
-     * @param targetContext interface to target context to be matched
+     * @param Gestalt1 interface to source gestalt to be matched
+     * @param Gestalt2 interface to target gestalt to be matched
      * @return interface to finally derived mapping
      * @throws TaxMapException 
      */
-    IContextMap<INode> map_taxonomy(IContext sourceContext, IContext targetContext) throws TaxMapException;
+    IGestaltMap<INode> map_taxonomy(IGestalt Gestalt1, IGestalt Gestalt2) throws TaxMapException;
 }
